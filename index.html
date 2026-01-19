@@ -1,232 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Xuan Nails YVR | Press-On Nail Boutique</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #fcf7f2;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xuan Nails YVR | Luxury Press-Ons</title>
+    <style>
+        /* --- STYLING (Same as before) --- */
+        :root {
+            --primary-color: #d4a373;
+            --secondary-color: #faedcd;
+            --accent-color: #b08968;
+            --text-color: #333;
+            --white: #ffffff;
+        }
 
-    header {
-      background-color: #fff;
-      padding: 20px 40px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 24px;
-      color: #b47b84;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: #666;
-      margin-left: 20px;
-      font-weight: 500;
-    }
-
-    nav a:hover {
-      color: #b47b84;
-    }
-
-    .hero {
-      background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url("https://via.placeholder.com/1200x400?text=Xuan+Nails+Hero");
-      background-size: cover;
-      background-position: center;
-      color: #fff;
-      text-align: center;
-      padding: 80px 20px;
-    }
-
-    .hero h1 {
-      font-size: 48px;
-      margin-bottom: 10px;
-    }
-
-    .hero p {
-      font-size: 20px;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      padding: 12px 30px;
-      background-color: #b47b84;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      text-decoration: none;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 50px auto;
-      padding: 0 20px;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 32px;
-      margin-bottom: 30px;
-      color: #b47b84;
-    }
-
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-    }
-
-    .product-card {
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      transition: 0.3s ease;
-    }
-
-    .product-card:hover {
-      transform: scale(1.02);
-    }
-
-    .product-img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-    }
-
-    .product-info {
-      padding: 20px;
-    }
-
-    .product-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #b47b84;
-      margin: 0 0 10px;
-    }
-
-    .product-id {
-      font-size: 13px;
-      color: #aaa;
-      margin-bottom: 10px;
-    }
-
-    .product-price {
-      font-size: 16px;
-      color: #444;
-      font-weight: 600;
-      margin-bottom: 15px;
-    }
-
-    .product-desc {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 20px;
-    }
-
-    .contact-btn {
-      display: inline-block;
-      background-color: #444;
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 4px;
-      text-decoration: none;
-    }
-
-    footer {
-      background: #fff;
-      padding: 40px;
-      text-align: center;
-      font-size: 14px;
-      color: #777;
-      margin-top: 80px;
-    }
-  </style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--secondary-color); color: var(--text-color); }
+        header { background-color: var(--white); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .logo { font-size: 24px; font-weight: bold; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }
+        nav a { text-decoration: none; color: var(--text-color); margin-left: 20px; font-weight: 500; }
+        nav a:hover { color: var(--primary-color); }
+        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://placehold.co/1200x400/333/FFF?text=Custom+Nails+Banner'); background-size: cover; background-position: center; color: var(--white); }
+        .hero h1 { font-size: 48px; margin-bottom: 10px; }
+        .hero p { font-size: 20px; margin-bottom: 20px; }
+        .btn { background-color: var(--primary-color); color: var(--white); padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; transition: background 0.3s; }
+        .btn:hover { background-color: var(--accent-color); }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .section-title { text-align: center; margin-bottom: 40px; color: var(--accent-color); font-size: 32px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .product-card { background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img { width: 100%; height: 300px; object-fit: cover; background-color: #eee; }
+        .product-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .product-id { font-size: 12px; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .product-title { font-size: 18px; margin: 0 0 10px; color: var(--text-color); font-weight: bold; }
+        .price-tag { margin: 10px 0; font-weight: bold; color: var(--accent-color); font-size: 20px; }
+        .product-desc { font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 10px; }
+        .design-list { font-size: 13px; color: #555; margin: 10px 0; padding-left: 20px; margin-bottom: 15px; }
+        .design-list li { margin-bottom: 4px; }
+        .dm-btn { display: block; width: 100%; text-align: center; background-color: #333; color: var(--white); padding: 12px; text-decoration: none; border-radius: 4px; margin-top: auto; }
+        .dm-btn:hover { background-color: var(--primary-color); }
+        .video-link { display: block; text-align: center; margin-top: 10px; font-size: 14px; color: #888; text-decoration: none; }
+        footer { background-color: var(--white); text-align: center; padding: 40px; margin-top: 60px; border-top: 1px solid #eee; }
+    </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">Xuan Nails YVR</div>
-  <nav>
-    <a href="#catalog">Shop</a>
-    <a href="#contact">Contact</a>
-    <a href="https://www.instagram.com/xuan_nails_yvr" target="_blank">Instagram</a>
-  </nav>
-</header>
+    <header>
+        <div class="logo">Xuan Nails YVR</div>
+        <nav>
+            <a href="#catalog">Catalog</a>
+            <a href="https://www.instagram.com/xuan_nails_yvr/" target="_blank">Instagram</a>
+        </nav>
+    </header>
 
-<section class="hero">
-  <h1>Luxury Press-On Nails</h1>
-  <p>Shop Premium Handmade Nail Sets – Local Pickup near Joyce-Collingwood</p>
-  <a href="#catalog" class="btn">Browse Collection</a>
-</section>
-
-<section class="container" id="catalog">
-  <h2 class="section-title">Featured Products</h2>
-  <div class="product-grid">
-
-    <!-- Product 1 -->
-    <div class="product-card">
-      <img src="https://images.unsplash.com/photo-1622169442829-e7c7d712c6bb?auto=format&fit=crop&w=800" class="product-img" alt="Nude Pink 3D Pearl Press-On Nails">
-      <div class="product-info">
-        <div class="product-title">✨ Nude Pink 3D Pearl & Crystal — Luxury Jelly Set ✨</div>
-        <div class="product-id">Product ID: MT002</div>
-        <div class="product-price">$25 CAD</div>
-        <div class="product-desc">
-          Nude pink jelly with 3D pearl clusters, gold beads, and crystal accents. Glamorous and perfect for weddings, parties or everyday luxe.
-        </div>
-        <a class="contact-btn" href="mailto:xuan_nails_yvr@gmail.com?subject=Order Inquiry for MT002">Order Now</a>
-      </div>
+    <div class="hero">
+        <h1>Salon-Quality Nails at Home</h1>
+        <p>Handcrafted luxury press-ons. Custom bundles available.</p>
+        <a href="#catalog" class="btn">Shop Collection</a>
     </div>
 
-    <!-- Product 2 -->
-    <div class="product-card">
-      <img src="https://images.unsplash.com/photo-1602532108211-3d91c4b22dfc?auto=format&fit=crop&w=800" class="product-img" alt="Nude Gold French Tip Nails">
-      <div class="product-info">
-        <div class="product-title">Nude Gold French Tip — Minimal Chic</div>
-        <div class="product-id">Product ID: JP3719</div>
-        <div class="product-price">$25 CAD</div>
-        <div class="product-desc">
-          Glossy nude base with thin gold French tip. Simple, classy, and clean for everyday polished wear or weddings.
+    <div class="container" id="catalog">
+        <h2 class="section-title">Latest Collections</h2>
+        <div id="loading" style="text-align:center;">Loading Products...</div>
+        <div class="product-grid" id="product-container">
+            <!-- Products will be loaded from Firebase -->
         </div>
-        <a class="contact-btn" href="mailto:xuan_nails_yvr@gmail.com?subject=Order Inquiry for JP3719">Order Now</a>
-      </div>
     </div>
 
-    <!-- Product 3 -->
-    <div class="product-card">
-      <img src="https://images.unsplash.com/photo-1679678993633-2c4db7f43bb3?auto=format&fit=crop&w=800" class="product-img" alt="Elegant Lavender Butterfly Press-On Nails">
-      <div class="product-info">
-        <div class="product-title">🤍 Elegant Lavender Butterfly Press-Ons</div>
-        <div class="product-id">Product ID: CDJ-7-256LYDZW</div>
-        <div class="product-price">$25 CAD</div>
-        <div class="product-desc">
-          Lavender ombré base with pearly butterfly and subtle crystal floral accents. Ideal for soft bridal or dreamy glam style.
-        </div>
-        <a class="contact-btn" href="mailto:xuan_nails_yvr@gmail.com?subject=Order Inquiry for CDJ-7-256LYDZW">Order Now</a>
-      </div>
-    </div>
+    <footer>
+        <p>&copy; 2023 Xuan Nails YVR. All Rights Reserved.</p>
+        <p>📍 Local pickup near Joyce-Collingwood Station</p>
+    </footer>
 
-  </div>
-</section>
+    <!-- FIREBASE SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-<footer id="contact">
-  <p>&copy; 2024 Xuan Nails YVR</p>
-  <p>📍 Pickup near Joyce-Collingwood Station | 📩 DM on Instagram @xuan_nails_yvr</p>
-  <p>Email: <a href="mailto:xuan_nails_yvr@gmail.com">xuan_nails_yvr@gmail.com</a></p>
-</footer>
+        // ==========================================================
+        // 🔴 PASTE YOUR FIREBASE CONFIG FROM THE CONSOLE HERE 🔴
+        // ==========================================================
+        const firebaseConfig = {
+             apiKey: "AIzaSyBp7OWmjMNMt0x9OiVg5ySRaC6Z4MhPGSM",
+  authDomain: "xuannailsyvr-c7514.firebaseapp.com",
+  projectId: "xuannailsyvr-c7514",
+  storageBucket: "xuannailsyvr-c7514.firebasestorage.app",
+  messagingSenderId: "811019827636",
+  appId: "1:811019827636:web:5c194e9d3e4fd1b2089ae1",
+  measurementId: "G-0QCKQXZZ20"
+        };
 
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const container = document.getElementById('product-container');
+        const loading = document.getElementById('loading');
+
+        // Fetch Products
+        async function loadProducts() {
+            const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            loading.style.display = 'none'; // Hide loading text
+
+            querySnapshot.forEach((doc) => {
+                const p = doc.data();
+                
+                // Create Card HTML
+                const card = document.createElement('div');
+                card.classList.add('product-card');
+                
+                // Handle Design List
+                let designHtml = '';
+                if(p.design) {
+                    const lines = p.design.split('\n');
+                    designHtml = `<ul class="design-list">` + lines.map(line => `<li>${line}</li>`).join('') + `</ul>`;
+                }
+
+                // Handle Video
+                let videoHtml = '';
+                if(p.video) {
+                    videoHtml = `<a href="${p.video}" target="_blank" class="video-link">▶ Watch Video</a>`;
+                }
+                
+                card.innerHTML = `
+                    <img src="${p.image}" alt="${p.name}" class="product-img">
+                    <div class="product-info">
+                        <div class="product-id">ID: ${p.id}</div>
+                        <h3 class="product-title">${p.name}</h3>
+                        <div class="price-tag">$${p.price} CAD</div>
+                        <p class="product-desc">${p.description}</p>
+                        ${designHtml}
+                        ${videoHtml}
+                        <a href="https://www.instagram.com/xuan_nails_yvr/" target="_blank" class="dm-btn">Order via DM 💌</a>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        loadProducts();
+    </script>
 </body>
 </html>
-```
-
