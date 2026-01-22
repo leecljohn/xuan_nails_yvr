@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xuan Nails YVR | Luxury Press-Ons</title>
+    <style>
+        /* --- GLOBAL FIX FOR BLEEDING BUTTONS --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        /* -------------------------------------- */
+
+        :root {
+            --primary-color: #d4a373;
+            --secondary-color: #faedcd;
+            --accent-color: #b08968;
+            --text-color: #333;
+            --white: #ffffff;
+        }
+
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--secondary-color); color: var(--text-color); }
+        
+        /* Header & Nav */
+        header { background-color: var(--white); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
+        /* LOGO & BRAND LINK STYLES */
+        .brand-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 15px; /* Space between logo and text */
+        }
+        
+        .logo-img {
+            height: 35px; /* Forces the logo to stay small regardless of original size */
+            width: auto;
+            object-fit: contain;
+        }
+
+        .brand-text { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: var(--accent-color); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        nav a { text-decoration: none; color: var(--text-color); margin-left: 20px; font-weight: 500; }
+        nav a:hover { color: var(--primary-color); }
+
+        /* Hero */
+        .hero { 
+            text-align: center; 
+            padding: 60px 20px; 
+            /* REPLACE THE URL BELOW WITH YOUR BANNER URL */
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://raw.githubusercontent.com/leecljohn/xuan_nails_yvr/refs/heads/main/images/index/XNY%20Banner.png'); 
+            background-size: cover; 
+            background-position: center; 
+            color: var(--white); 
+        }
+        
+        .hero h1 { font-size: 48px; margin-bottom: 10px; }
+        .btn { background-color: var(--primary-color); color: var(--white); padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; transition: background 0.3s; }
+        .btn:hover { background-color: var(--accent-color); }
+
+        /* Grid & Cards */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .section-title { text-align: center; margin-bottom: 40px; color: var(--accent-color); font-size: 32px; }
+        
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .product-card { background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-5px); }
+
+        /* SQUARE IMAGE STYLING */
+        .gallery-container {
+            width: 100%;
+            aspect-ratio: 1 / 1; 
+            position: relative;
+            background-color: #eee;
+            overflow: hidden;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Thumbnails for multiple images */
+        .thumbnails {
+            display: flex;
+            gap: 5px;
+            padding: 5px;
+            overflow-x: auto;
+            border-bottom: 1px solid #eee;
+        }
+        .thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+        .thumb:hover, .thumb.active { opacity: 1; border: 2px solid var(--primary-color); }
+
+        /* Info */
+        .product-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .product-id { font-size: 12px; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .product-title { font-size: 18px; margin: 0 0 10px; color: var(--text-color); font-weight: bold; }
+        .price-tag { margin: 10px 0; font-weight: bold; color: var(--accent-color); font-size: 20px; }
+        
+        .product-desc { font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 10px; }
+        
+        .design-list { font-size: 13px; color: #555; margin: 10px 0; padding-left: 20px; margin-bottom: 15px; }
+        .design-list li { margin-bottom: 4px; }
+
+        .dm-btn { display: block; width: 100%; text-align: center; background-color: #333; color: var(--white); padding: 12px; text-decoration: none; border-radius: 4px; margin-top: auto; }
+        .dm-btn:hover { background-color: var(--primary-color); }
+        .video-link { display: block; text-align: center; margin-top: 10px; font-size: 14px; color: #888; text-decoration: none; }
+
+        footer { background-color: var(--white); text-align: center; padding: 40px; margin-top: 60px; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- NEW LOGO & TEXT LINK -->
+        <a href="https://leecljohn.github.io/xuan_nails_yvr/" class="brand-link">
+            <!-- YOUR LOGO URL HAS BEEN INSERTED HERE -->
+            <img src="https://raw.githubusercontent.com/leecljohn/xuan_nails_yvr/refs/heads/main/images/index/XNY%20Logo.png" alt="Logo" class="logo-img">
+            <span class="brand-text">Xuan Nails YVR</span>
+        </a>
+
+        <nav>
+            <a href="mailto:xuan_nails_yvr@gmail.com">Contact</a>
+            <a href="https://www.instagram.com/xuan_nails_yvr/" target="_blank">Instagram</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>Salon-Quality Nails at Home</h1>
+        <p>Handcrafted luxury press-ons. Custom bundles available.</p>
+        <a href="#catalog" class="btn">Shop Collection</a>
+    </div>
+
+    <div class="container" id="catalog">
+        <h2 class="section-title">Latest Collections</h2>
+        <div id="loading" style="text-align:center;">Loading Products...</div>
+        <div class="product-grid" id="product-container"></div>
+    </div>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Xuan Nails YVR. All Rights Reserved.</p>
+        <p>📍 Local pickup near Joyce-Collingwood Station</p>
+    </footer>
+
+    <!-- FIREBASE SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBp7OWmjMNMt0x9OiVg5ySRaC6Z4MhPGSM",
+          authDomain: "xuannailsyvr-c7514.firebaseapp.com",
+          projectId: "xuannailsyvr-c7514",
+          storageBucket: "xuannailsyvr-c7514.firebasestorage.app",
+          messagingSenderId: "811019827636",
+          appId: "1:811019827636:web:5c194e9d3e4fd1b2089ae1",
+          measurementId: "G-0QCKQXZZ20"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const container = document.getElementById('product-container');
+        const loading = document.getElementById('loading');
+
+        async function loadProducts() {
+            const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
+            const querySnapshot = await getDocs(q);
+            loading.style.display = 'none';
+
+            querySnapshot.forEach((doc) => {
+                const p = doc.data();
+                
+                let images = [];
+                if (Array.isArray(p.images)) {
+                    images = p.images;
+                } else if (p.image) {
+                    images = [p.image];
+                }
+
+                const card = document.createElement('div');
+                card.classList.add('product-card');
+
+                let galleryHtml = `<div class="gallery-container">
+                    <img id="img-${doc.id}" src="${images[0] || 'https://placehold.co/400'}" class="product-img">
+                </div>`;
+
+                if (images.length > 1) {
+                    galleryHtml += `<div class="thumbnails">`;
+                    images.forEach((url, index) => {
+                        const activeClass = index === 0 ? 'active' : '';
+                        galleryHtml += `<img src="${url}" class="thumb ${activeClass}" onclick="changeImage('${doc.id}', '${url}', this)">`;
+                    });
+                    galleryHtml += `</div>`;
+                }
+
+                let designHtml = '';
+                if(p.design) {
+                    const lines = p.design.split('\n');
+                    designHtml = `<ul class="design-list">` + lines.map(line => `<li>${line}</li>`).join('') + `</ul>`;
+                }
+
+                let videoHtml = '';
+                if(p.video) {
+                    videoHtml = `<a href="${p.video}" target="_blank" class="video-link">▶ Watch Video</a>`;
+                }
+                
+                card.innerHTML = `
+                    ${galleryHtml}
+                    <div class="product-info">
+                        <div class="product-id">ID: ${p.id}</div>
+                        <h3 class="product-title">${p.name}</h3>
+                        <div class="price-tag">$${p.price} CAD</div>
+                        <p class="product-desc">${p.description}</p>
+                        ${designHtml}
+                        ${videoHtml}
+                        <a href="https://www.instagram.com/xuan_nails_yvr/" target="_blank" class="dm-btn">Order via DM 💌</a>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        window.changeImage = (docId, url, element) => {
+            document.getElementById(`img-${docId}`).src = url;
+            const thumbs = element.parentElement.querySelectorAll('.thumb');
+            thumbs.forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+        };
+
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        loadProducts();
+    </script>
+</body>
+</html>
