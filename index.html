@@ -162,7 +162,7 @@
     <!-- FIREBASE SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, orderBy, query, getDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyBp7OWmjMNMt0x9OiVg5ySRaC6Z4MhPGSM",
@@ -178,6 +178,43 @@
         const db = getFirestore(app);
         const container = document.getElementById('product-container');
         const loading = document.getElementById('loading');
+        const settingsDocId = "site-settings";
+
+        // Load site settings (banner and colors)
+        async function loadSiteSettings() {
+            try {
+                const docRef = doc(db, "settings", settingsDocId);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const settings = docSnap.data();
+                    
+                    // Apply banner URL
+                    if (settings.bannerUrl) {
+                        const hero = document.querySelector('.hero');
+                        hero.style.background = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${settings.bannerUrl}')`;
+                        hero.style.backgroundSize = 'cover';
+                        hero.style.backgroundPosition = 'center';
+                    }
+                    
+                    // Apply colors
+                    if (settings.colors) {
+                        const root = document.documentElement;
+                        if (settings.colors.primary) {
+                            root.style.setProperty('--primary-color', settings.colors.primary);
+                        }
+                        if (settings.colors.secondary) {
+                            root.style.setProperty('--secondary-color', settings.colors.secondary);
+                        }
+                        if (settings.colors.accent) {
+                            root.style.setProperty('--accent-color', settings.colors.accent);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading site settings:", error);
+            }
+        }
 
         async function loadProducts() {
             const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
@@ -247,6 +284,8 @@
 
         document.getElementById('year').textContent = new Date().getFullYear();
 
+        // Load both settings and products
+        loadSiteSettings();
         loadProducts();
     </script>
 </body>

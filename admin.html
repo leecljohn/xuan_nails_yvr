@@ -20,6 +20,38 @@
         .btn-add { background-color: #28a745; }
         .btn-edit { background-color: #ffc107; color: #000; }
         .btn-upload { background-color: #17a2b8; width: 100%; } /* Blue for Upload */
+        .btn-settings { background-color: #6c757d; }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover {
+            color: #d4a373;
+        }
+        .tab-btn.active {
+            color: #d4a373;
+            border-bottom-color: #d4a373;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
         
         /* Image Upload Preview Area */
         .upload-area {
@@ -67,9 +99,49 @@
         .action-buttons { display: flex; gap: 10px; }
         .btn-del { background-color: #dc3545; padding: 5px 10px; font-size: 12px; }
 
+        /* Site Settings Section */
+        .settings-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+        .settings-section h3 {
+            margin-top: 0;
+            color: #d4a373;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .color-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .banner-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+        .banner-preview.show {
+            display: block;
+        }
+
         #auth-section { display: block; }
         #admin-section { display: none; }
         .hidden-input { display: none; }
+        
     </style>
 </head>
 <body>
@@ -83,10 +155,20 @@
 
         <!-- ADMIN -->
         <div id="admin-section">
-            <h2>🛠 Product Manager (V3 - Upload Ready)</h2>
+            <h2>🛠 Admin Dashboard</h2>
             <p id="user-email"></p>
 
-            <!-- INPUT FORM -->
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('products')">📦 Product Manager</button>
+                <button class="tab-btn" onclick="switchTab('settings')">🎨 Site Settings</button>
+            </div>
+
+            <!-- PRODUCTS TAB -->
+            <div id="tab-products" class="tab-content active">
+                <h3>Product Manager</h3>
+
+                <!-- INPUT FORM -->
             <div class="form-group">
                 <label>Product ID:</label>
                 <input type="text" id="p-id" placeholder="e.g., NEW-001">
@@ -136,13 +218,52 @@
             <hr style="margin: 30px 0;">
             <h3>Current Products:</h3>
             <div id="product-list"></div>
+            </div>
+
+            <!-- SETTINGS TAB -->
+            <div id="tab-settings" class="tab-content">
+                <h3>Site Settings</h3>
+                
+                <div class="settings-section">
+                    <div class="form-group">
+                        <label>Banner Image:</label>
+                        <div class="upload-area" style="padding: 15px;">
+                            <input type="file" id="banner-upload" class="hidden-input" accept="image/*" onchange="handleBannerUpload(this)">
+                            <button class="btn btn-upload" onclick="document.getElementById('banner-upload').click()">📷 Upload New Banner</button>
+                            <div id="banner-status" style="font-size:12px; color:#666; margin-top:5px;"></div>
+                            <img id="banner-preview" class="banner-preview" alt="Banner Preview">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Color Scheme:</label>
+                        <div class="color-input-group">
+                            <label style="margin:0; font-weight:normal;">Primary:</label>
+                            <input type="color" id="color-primary" value="#d4a373">
+                            <input type="text" id="color-primary-text" value="#d4a373" style="width:100px;">
+                        </div>
+                        <div class="color-input-group">
+                            <label style="margin:0; font-weight:normal;">Secondary:</label>
+                            <input type="color" id="color-secondary" value="#faedcd">
+                            <input type="text" id="color-secondary-text" value="#faedcd" style="width:100px;">
+                        </div>
+                        <div class="color-input-group">
+                            <label style="margin:0; font-weight:normal;">Accent:</label>
+                            <input type="color" id="color-accent" value="#b08968">
+                            <input type="text" id="color-accent-text" value="#b08968" style="width:100px;">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-settings" onclick="saveSiteSettings()">Save Site Settings</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- FIREBASE SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         // NEW IMPORTS FOR STORAGE
         import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
@@ -165,6 +286,8 @@
 
         let currentEditDocId = null;
         let currentImageUrls = []; // Array to store URLs for the product being edited/added
+        let currentBannerUrl = ""; // Current banner URL
+        let settingsDocId = "site-settings"; // Fixed ID for settings document
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -172,11 +295,34 @@
                 document.getElementById('admin-section').style.display = 'block';
                 document.getElementById('user-email').innerText = "Logged in as: " + user.email;
                 loadList();
+                loadSiteSettings();
             } else {
                 document.getElementById('auth-section').style.display = 'block';
                 document.getElementById('admin-section').style.display = 'none';
             }
         });
+
+        // SWITCH TABS
+        window.switchTab = (tabName) => {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            // Update button states
+            const buttons = document.querySelectorAll('.tab-btn');
+            if (tabName === 'products') {
+                buttons[0].classList.add('active');
+            } else {
+                buttons[1].classList.add('active');
+            }
+        };
 
         window.googleSignIn = async () => {
             const provider = new GoogleAuthProvider();
@@ -236,6 +382,115 @@
             currentImageUrls.splice(index, 1);
             renderPreviews();
         };
+
+        // HANDLE BANNER UPLOAD
+        window.handleBannerUpload = async (input) => {
+            const file = input.files[0];
+            if (!file) return;
+
+            const statusDiv = document.getElementById('banner-status');
+            statusDiv.innerText = "Uploading banner... Please wait.";
+
+            const fileName = "banner_" + Date.now() + "_" + file.name;
+            const storageRef = ref(storage, 'site/' + fileName);
+
+            try {
+                const snapshot = await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(snapshot.ref);
+                currentBannerUrl = url;
+                
+                // Show preview
+                const preview = document.getElementById('banner-preview');
+                preview.src = url;
+                preview.classList.add('show');
+                
+                statusDiv.innerText = "Banner uploaded! Click 'Save Site Settings' to apply.";
+                input.value = "";
+            } catch (error) {
+                console.error("Banner upload failed", error);
+                alert("Failed to upload banner");
+                statusDiv.innerText = "";
+            }
+        };
+
+        // LOAD SITE SETTINGS
+        async function loadSiteSettings() {
+            try {
+                const docRef = doc(db, "settings", settingsDocId);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const settings = docSnap.data();
+                    
+                    // Load banner
+                    if (settings.bannerUrl) {
+                        currentBannerUrl = settings.bannerUrl;
+                        const preview = document.getElementById('banner-preview');
+                        preview.src = settings.bannerUrl;
+                        preview.classList.add('show');
+                    }
+                    
+                    // Load colors
+                    if (settings.colors) {
+                        document.getElementById('color-primary').value = settings.colors.primary || '#d4a373';
+                        document.getElementById('color-primary-text').value = settings.colors.primary || '#d4a373';
+                        document.getElementById('color-secondary').value = settings.colors.secondary || '#faedcd';
+                        document.getElementById('color-secondary-text').value = settings.colors.secondary || '#faedcd';
+                        document.getElementById('color-accent').value = settings.colors.accent || '#b08968';
+                        document.getElementById('color-accent-text').value = settings.colors.accent || '#b08968';
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading settings:", error);
+            }
+        }
+
+        // SAVE SITE SETTINGS
+        window.saveSiteSettings = async () => {
+            const colors = {
+                primary: document.getElementById('color-primary').value,
+                secondary: document.getElementById('color-secondary').value,
+                accent: document.getElementById('color-accent').value
+            };
+
+            const data = {
+                bannerUrl: currentBannerUrl,
+                colors: colors,
+                timestamp: Date.now()
+            };
+
+            try {
+                await setDoc(doc(db, "settings", settingsDocId), data);
+                alert("Site settings saved successfully!");
+            } catch (e) {
+                console.error(e);
+                alert("Error saving site settings");
+            }
+        };
+
+        // SYNC COLOR INPUTS
+        document.addEventListener('DOMContentLoaded', () => {
+            const colorInputs = [
+                { picker: 'color-primary', text: 'color-primary-text' },
+                { picker: 'color-secondary', text: 'color-secondary-text' },
+                { picker: 'color-accent', text: 'color-accent-text' }
+            ];
+
+            colorInputs.forEach(({ picker, text }) => {
+                const pickerEl = document.getElementById(picker);
+                const textEl = document.getElementById(text);
+
+                pickerEl.addEventListener('input', () => {
+                    textEl.value = pickerEl.value;
+                });
+
+                textEl.addEventListener('input', () => {
+                    if (/^#[0-9A-Fa-f]{6}$/.test(textEl.value)) {
+                        pickerEl.value = textEl.value;
+                    }
+                });
+            });
+        });
 
         // SAVE PRODUCT
         window.saveProduct = async () => {
@@ -327,7 +582,7 @@
 
         // RESET FORM
         window.resetForm = () => {
-            document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => i.value = '');
+            document.querySelectorAll('#tab-products input[type="text"], #tab-products input[type="number"], #tab-products textarea').forEach(i => i.value = '');
             currentImageUrls = [];
             renderPreviews();
             currentEditDocId = null;
