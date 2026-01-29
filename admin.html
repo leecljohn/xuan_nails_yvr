@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Xuan Nails</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #d4a373; padding-bottom: 10px; }
+        
+        /* Form */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], input[type="number"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { height: 60px; font-family: monospace; }
+        
+        .btn { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; margin-right: 10px; }
+        .btn-login { background-color: #4285F4; width: 100%; margin-bottom: 20px; }
+        .btn-add { background-color: #28a745; }
+        .btn-edit { background-color: #ffc107; color: #000; }
+        .btn-upload { background-color: #17a2b8; width: 100%; } /* Blue for Upload */
+        
+        /* Image Upload Preview Area */
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .preview-item {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .remove-img {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: red;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* List */
+        .list-item { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        .list-info h4 { margin: 0; font-size: 16px; }
+        .list-info span { font-size: 14px; color: #666; }
+        .action-buttons { display: flex; gap: 10px; }
+        .btn-del { background-color: #dc3545; padding: 5px 10px; font-size: 12px; }
+
+        #auth-section { display: block; }
+        #admin-section { display: none; }
+        .hidden-input { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- LOGIN -->
+        <div id="auth-section">
+            <h2>🔐 Admin Login</h2>
+            <button class="btn btn-login" onclick="googleSignIn()">Sign in with Google</button>
+        </div>
+
+        <!-- ADMIN -->
+        <div id="admin-section">
+            <h2>🛠 Product Manager (V3 - Upload Ready)</h2>
+            <p id="user-email"></p>
+
+            <!-- INPUT FORM -->
+            <div class="form-group">
+                <label>Product ID:</label>
+                <input type="text" id="p-id" placeholder="e.g., NEW-001">
+            </div>
+            <div class="form-group">
+                <label>Product Name:</label>
+                <input type="text" id="p-name" placeholder="e.g., Red Glitter Set">
+            </div>
+            <div class="form-group">
+                <label>Price (CAD):</label>
+                <input type="number" id="p-price" placeholder="25">
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea id="p-desc" placeholder="Short description..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Design Details:</label>
+                <textarea id="p-design" placeholder="Soft nude base\nGold accents"></textarea>
+            </div>
+            
+            <!-- NEW IMAGE UPLOAD SECTION -->
+            <div class="form-group">
+                <label>Product Images:</label>
+                <div class="upload-area">
+                    <p>Click to select photos (Hold Ctrl/Cmd to select multiple)</p>
+                    <!-- Hidden input triggered by button -->
+                    <input type="file" id="file-upload" class="hidden-input" multiple accept="image/*" onchange="handleFileSelect(this)">
+                    <button class="btn btn-upload" onclick="document.getElementById('file-upload').click()">📷 Select Photos</button>
+                    <div id="upload-status" style="font-size:12px; color:#666; margin-top:5px;"></div>
+                </div>
+                
+                <!-- Previews -->
+                <div class="image-preview-grid" id="image-previews">
+                    <!-- Images will appear here -->
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Video URL:</label>
+                <input type="text" id="p-video" placeholder="https://...">
+            </div>
+
+            <button class="btn btn-add" id="btn-save" onclick="saveProduct()">Add Product</button>
+            <button class="btn" style="background:#999;" onclick="resetForm()">Clear / Cancel</button>
+
+            <hr style="margin: 30px 0;">
+            <h3>Current Products:</h3>
+            <div id="product-list"></div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        // NEW IMPORTS FOR STORAGE
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+
+        // PASTE YOUR FIREBASE CONFIG HERE
+        const firebaseConfig = {
+ apiKey: "AIzaSyBp7OWmjMNMt0x9OiVg5ySRaC6Z4MhPGSM",
+  authDomain: "xuannailsyvr-c7514.firebaseapp.com",
+  projectId: "xuannailsyvr-c7514",
+  storageBucket: "xuannailsyvr-c7514.firebasestorage.app",
+  messagingSenderId: "811019827636",
+  appId: "1:811019827636:web:5c194e9d3e4fd1b2089ae1",
+  measurementId: "G-0QCKQXZZ20"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const storage = getStorage(app); // Initialize Storage
+
+        let currentEditDocId = null;
+        let currentImageUrls = []; // Array to store URLs for the product being edited/added
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'block';
+                document.getElementById('user-email').innerText = "Logged in as: " + user.email;
+                loadList();
+            } else {
+                document.getElementById('auth-section').style.display = 'block';
+                document.getElementById('admin-section').style.display = 'none';
+            }
+        });
+
+        window.googleSignIn = async () => {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+        };
+
+        // HANDLE FILE SELECTION & UPLOAD
+        window.handleFileSelect = async (input) => {
+            const files = input.files;
+            if (files.length === 0) return;
+
+            const statusDiv = document.getElementById('upload-status');
+            statusDiv.innerText = "Uploading " + files.length + " image(s)... Please wait.";
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                // Create a unique filename: timestamp + filename
+                const fileName = Date.now() + "_" + file.name;
+                const storageRef = ref(storage, 'products/' + fileName);
+
+                try {
+                    // Upload file
+                    const snapshot = await uploadBytes(storageRef, file);
+                    // Get URL
+                    const url = await getDownloadURL(snapshot.ref);
+                    // Add to array
+                    currentImageUrls.push(url);
+                } catch (error) {
+                    console.error("Upload failed", error);
+                    alert("Failed to upload " + file.name);
+                }
+            }
+
+            renderPreviews();
+            statusDiv.innerText = "Upload complete!";
+            input.value = ""; // Reset input so we can select more if we want
+        };
+
+        // RENDER PREVIEWS
+        function renderPreviews() {
+            const container = document.getElementById('image-previews');
+            container.innerHTML = "";
+            
+            currentImageUrls.forEach((url, index) => {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <img src="${url}">
+                    <button class="remove-img" onclick="removeImage(${index})">X</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // REMOVE IMAGE FROM LIST
+        window.removeImage = (index) => {
+            currentImageUrls.splice(index, 1);
+            renderPreviews();
+        };
+
+        // SAVE PRODUCT
+        window.saveProduct = async () => {
+            const id = document.getElementById('p-id').value;
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const desc = document.getElementById('p-desc').value;
+            const design = document.getElementById('p-design').value;
+            const video = document.getElementById('p-video').value;
+
+            if(!id || !name || !price) { alert("Fill required fields"); return; }
+
+            const data = { id, name, price, description: desc, design, images: currentImageUrls, video, timestamp: Date.now() };
+
+            try {
+                if (currentEditDocId) {
+                    await updateDoc(doc(db, "products", currentEditDocId), data);
+                    alert("Product Updated!");
+                } else {
+                    await addDoc(collection(db, "products"), data);
+                    alert("Product Added!");
+                }
+                resetForm();
+            } catch (e) {
+                console.error(e);
+                alert("Error saving product");
+            }
+        };
+
+        // LOAD LIST
+        function loadList() {
+            const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                const listDiv = document.getElementById('product-list');
+                listDiv.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const p = docSnap.data();
+                    listDiv.innerHTML += `
+                        <div class="list-item">
+                            <div class="list-info">
+                                <h4>${p.name} <small>($${p.price})</small></h4>
+                                <span>ID: ${p.id}</span>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-edit" onclick="editProduct('${docSnap.id}')">Edit</button>
+                                <button class="btn btn-del" onclick="deleteProduct('${docSnap.id}')">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // EDIT PRODUCT
+        window.editProduct = async (docId) => {
+            const docRef = doc(db, "products", docId);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                const p = docSnap.data();
+                currentEditDocId = docId;
+
+                document.getElementById('p-id').value = p.id;
+                document.getElementById('p-name').value = p.name;
+                document.getElementById('p-price').value = p.price;
+                document.getElementById('p-desc').value = p.description;
+                document.getElementById('p-design').value = p.design || '';
+                document.getElementById('p-video').value = p.video || '';
+
+                // Load existing images
+                currentImageUrls = Array.isArray(p.images) ? p.images : [p.image];
+                renderPreviews();
+
+                const btn = document.getElementById('btn-save');
+                btn.innerText = "Update Product";
+                btn.classList.remove('btn-add');
+                btn.classList.add('btn-edit');
+
+                window.scrollTo(0,0);
+            }
+        };
+
+        // DELETE PRODUCT
+        window.deleteProduct = async (docId) => {
+            if(confirm("Are you sure you want to delete this product?")) {
+                await deleteDoc(doc(db, "products", docId));
+            }
+        };
+
+        // RESET FORM
+        window.resetForm = () => {
+            document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => i.value = '');
+            currentImageUrls = [];
+            renderPreviews();
+            currentEditDocId = null;
+            const btn = document.getElementById('btn-save');
+            btn.innerText = "Add Product";
+            btn.classList.remove('btn-edit');
+            btn.classList.add('btn-add');
+            document.getElementById('upload-status').innerText = "";
+        }
+    </script>
+</body>
+</html>
