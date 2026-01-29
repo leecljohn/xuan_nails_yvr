@@ -1,0 +1,15 @@
+# Firebase Configuration - Contains sensitive API keys
+firebase-config.js
+
+# API Keys
+RooCode API Key.txt
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
