@@ -272,8 +272,9 @@
             <!-- TABS -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('products')">📦 Product Manager</button>
-                <button class="tab-btn" onclick="switchTab('themes')">🎨 Theme Manager</button>
                 <button class="tab-btn" onclick="switchTab('settings')">⚙️ Site Settings</button>
+                <button class="tab-btn" onclick="switchTab('create-theme')">✏️ Create Theme</button>
+                <button class="tab-btn" onclick="switchTab('manage-theme')">📋 Manage Theme</button>
             </div>
 
             <!-- PRODUCTS TAB -->
@@ -332,13 +333,33 @@
             <div id="product-list"></div>
             </div>
 
-            <!-- THEMES TAB -->
-            <div id="tab-themes" class="tab-content">
-                <h3>Theme Manager</h3>
-                <p>Create and manage themes. Each theme includes a banner and color scheme.</p>
+            <!-- SITE SETTINGS TAB -->
+            <div id="tab-settings" class="tab-content">
+                <h3>Site Settings</h3>
+                <p>View and apply the active theme for your website.</p>
                 
                 <div class="settings-section">
-                    <h4>Create New Theme</h4>
+                    <h4>Active Theme</h4>
+                    <div id="active-theme-display">
+                        <!-- Active theme will be displayed here -->
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>Apply a Theme</h4>
+                    <p>Click "Apply" on any theme below to make it active on your website.</p>
+                    <div class="theme-grid" id="theme-select-list">
+                        <!-- Themes for selection will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- CREATE THEME TAB -->
+            <div id="tab-create-theme" class="tab-content">
+                <h3>Create Theme</h3>
+                <p>Create a new theme with banner, colors, and banner message.</p>
+                
+                <div class="settings-section">
                     <div class="form-group">
                         <label>Theme Name:</label>
                         <input type="text" id="theme-name" placeholder="e.g., Christmas Theme">
@@ -392,24 +413,17 @@
                     <button class="btn btn-add" id="btn-save-theme" onclick="saveTheme()">Create Theme</button>
                     <button class="btn" style="background:#999;" onclick="resetThemeForm()">Clear Form</button>
                 </div>
+            </div>
 
+            <!-- MANAGE THEME TAB -->
+            <div id="tab-manage-theme" class="tab-content">
+                <h3>Manage Theme</h3>
+                <p>Edit or delete existing themes.</p>
+                
                 <div class="settings-section">
                     <h4>Available Themes</h4>
                     <div class="theme-grid" id="theme-list">
                         <!-- Themes will be loaded here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- SETTINGS TAB -->
-            <div id="tab-settings" class="tab-content">
-                <h3>Site Settings</h3>
-                <p>View and apply the active theme for your website.</p>
-                
-                <div class="settings-section">
-                    <h4>Active Theme</h4>
-                    <div id="active-theme-display">
-                        <!-- Active theme will be displayed here -->
                     </div>
                 </div>
             </div>
@@ -481,10 +495,12 @@
             const buttons = document.querySelectorAll('.tab-btn');
             if (tabName === 'products') {
                 buttons[0].classList.add('active');
-            } else if (tabName === 'themes') {
+            } else if (tabName === 'settings') {
                 buttons[1].classList.add('active');
-            } else {
+            } else if (tabName === 'create-theme') {
                 buttons[2].classList.add('active');
+            } else if (tabName === 'manage-theme') {
+                buttons[3].classList.add('active');
             }
         };
 
@@ -559,6 +575,7 @@
                 });
                 
                 renderThemeList();
+                renderThemeSelectList();
                 loadActiveTheme();
             });
         }
@@ -573,11 +590,47 @@
                     const settings = docSnap.data();
                     activeThemeId = settings.activeThemeId || null;
                     renderThemeList();
+                    renderThemeSelectList();
                     renderActiveThemeDisplay();
                 }
             } catch (error) {
                 console.error("Error loading active theme:", error);
             }
+        }
+
+        // RENDER THEME SELECTION LIST (for Site Settings tab)
+        function renderThemeSelectList() {
+            const container = document.getElementById('theme-select-list');
+            container.innerHTML = "";
+            
+            if (availableThemes.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#666;'>No themes available. Create one first.</p>";
+                return;
+            }
+            
+            availableThemes.forEach((theme) => {
+                const isActive = theme.id === activeThemeId;
+                const div = document.createElement('div');
+                div.className = `theme-item ${isActive ? 'active-theme' : ''}`;
+                div.innerHTML = `
+                    <img src="${theme.bannerUrl}" alt="${theme.name}" class="theme-banner">
+                    <div class="theme-info">
+                        <div class="theme-name">
+                            ${theme.name}
+                            ${isActive ? '<span class="active-badge">Active</span>' : ''}
+                        </div>
+                        <div class="theme-colors">
+                            <div class="color-swatch" style="background:${theme.colors.primary}" title="Primary"></div>
+                            <div class="color-swatch" style="background:${theme.colors.secondary}" title="Secondary"></div>
+                            <div class="color-swatch" style="background:${theme.colors.accent}" title="Accent"></div>
+                        </div>
+                        <div class="theme-actions">
+                            <button class="btn btn-apply" onclick="applyTheme('${theme.id}')">Apply</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
         }
 
         // RENDER THEME LIST
@@ -777,7 +830,7 @@
             btn.classList.remove('btn-add');
             btn.classList.add('btn-edit');
 
-            switchTab('themes');
+            switchTab('create-theme');
             window.scrollTo(0, 0);
         };
 
