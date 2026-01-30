@@ -143,9 +143,9 @@
     </header>
 
     <div class="hero">
-        <h1>Salon-Quality Nails at Home</h1>
-        <p>Handcrafted luxury press-ons. Custom bundles available.</p>
-        <a href="#catalog" class="btn">Shop Collection</a>
+        <h1 id="hero-headline">Salon-Quality Nails at Home</h1>
+        <p id="hero-subheadline">Handcrafted luxury press-ons. Custom bundles available.</p>
+        <a href="#catalog" class="btn" id="hero-button">Shop Collection</a>
     </div>
 
     <div class="container" id="catalog">
@@ -171,7 +171,7 @@
         const loading = document.getElementById('loading');
         const settingsDocId = "site-settings";
 
-        // Load site settings (banner and colors) from active theme
+        // Load site settings (banner, colors, and banner message) from active theme
         async function loadSiteSettings() {
             try {
                 const docRef = doc(db, "settings", settingsDocId);
@@ -199,6 +199,23 @@
                         }
                         if (settings.colors.accent) {
                             root.style.setProperty('--accent-color', settings.colors.accent);
+                        }
+                    }
+                    
+                    // Apply banner message
+                    if (settings.bannerMessage) {
+                        const headlineEl = document.getElementById('hero-headline');
+                        const subheadlineEl = document.getElementById('hero-subheadline');
+                        const buttonEl = document.getElementById('hero-button');
+                        
+                        if (headlineEl && settings.bannerMessage.headline) {
+                            headlineEl.textContent = settings.bannerMessage.headline;
+                        }
+                        if (subheadlineEl && settings.bannerMessage.subheadline) {
+                            subheadlineEl.textContent = settings.bannerMessage.subheadline;
+                        }
+                        if (buttonEl && settings.bannerMessage.buttonText) {
+                            buttonEl.textContent = settings.bannerMessage.buttonText;
                         }
                     }
                 }

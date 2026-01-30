@@ -355,6 +355,22 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Banner Message:</label>
+                        <div class="color-input-group">
+                            <label style="margin:0; font-weight:normal;">Headline:</label>
+                            <input type="text" id="banner-headline" value="Salon-Quality Nails at Home" placeholder="Main headline text">
+                        </div>
+                        <div class="color-input-group">
+                            <label style="margin:0; font-weight:normal;">Subheadline:</label>
+                            <input type="text" id="banner-subheadline" value="Handcrafted luxury press-ons. Custom bundles available." placeholder="Subheadline text">
+                        </div>
+                        <div class="color-input-group">
+                            <label style="margin:0; font-weight:normal;">Button Text:</label>
+                            <input type="text" id="banner-button-text" value="Shop Collection" placeholder="Button text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label>Color Scheme:</label>
                         <div class="color-input-group">
                             <label style="margin:0; font-weight:normal;">Primary:</label>
@@ -616,6 +632,8 @@
                 return;
             }
             
+            const bannerMessage = activeTheme.bannerMessage || {};
+            
             container.innerHTML = `
                 <div style="display:flex; gap:20px; align-items:flex-start;">
                     <img src="${activeTheme.bannerUrl}" alt="${activeTheme.name}" style="width:200px; height:120px; object-fit:cover; border-radius:4px;">
@@ -634,6 +652,12 @@
                                 <div class="color-swatch" style="background:${activeTheme.colors.accent}"></div>
                                 <span style="font-size:12px;">Accent</span>
                             </div>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <strong>Banner Message:</strong>
+                            <p style="font-size:14px; color:#666; margin:5px 0;">${bannerMessage.headline || 'Default'}</p>
+                            <p style="font-size:13px; color:#888; margin:0;">${bannerMessage.subheadline || ''}</p>
+                            <p style="font-size:13px; color:#888; margin:0;">Button: "${bannerMessage.buttonText || 'Shop Collection'}"</p>
                         </div>
                         <p style="font-size:12px; color:#666; margin:0;">This theme is currently applied to your website.</p>
                     </div>
@@ -676,6 +700,9 @@
             const primary = document.getElementById('color-primary').value;
             const secondary = document.getElementById('color-secondary').value;
             const accent = document.getElementById('color-accent').value;
+            const headline = document.getElementById('banner-headline').value;
+            const subheadline = document.getElementById('banner-subheadline').value;
+            const buttonText = document.getElementById('banner-button-text').value;
             
             if (!name) {
                 alert("Please enter a theme name");
@@ -688,10 +715,12 @@
             }
 
             const colors = { primary, secondary, accent };
+            const bannerMessage = { headline, subheadline, buttonText };
             const data = {
                 name: name,
                 bannerUrl: newBannerUrl,
                 colors: colors,
+                bannerMessage: bannerMessage,
                 timestamp: Date.now()
             };
 
@@ -733,6 +762,12 @@
             document.getElementById('color-accent').value = theme.colors.accent;
             document.getElementById('color-accent-text').value = theme.colors.accent;
 
+            // Populate banner message fields
+            const bannerMessage = theme.bannerMessage || {};
+            document.getElementById('banner-headline').value = bannerMessage.headline || 'Salon-Quality Nails at Home';
+            document.getElementById('banner-subheadline').value = bannerMessage.subheadline || 'Handcrafted luxury press-ons. Custom bundles available.';
+            document.getElementById('banner-button-text').value = bannerMessage.buttonText || 'Shop Collection';
+
             const preview = document.getElementById('new-banner-preview');
             preview.src = theme.bannerUrl;
             preview.classList.add('show');
@@ -769,6 +804,11 @@
                     activeThemeId: themeId,
                     bannerUrl: theme.bannerUrl,
                     colors: theme.colors,
+                    bannerMessage: theme.bannerMessage || {
+                        headline: 'Salon-Quality Nails at Home',
+                        subheadline: 'Handcrafted luxury press-ons. Custom bundles available.',
+                        buttonText: 'Shop Collection'
+                    },
                     timestamp: Date.now()
                 });
                 alert("Theme applied successfully!");
@@ -787,6 +827,11 @@
             document.getElementById('color-secondary-text').value = "#faedcd";
             document.getElementById('color-accent').value = "#b08968";
             document.getElementById('color-accent-text').value = "#b08968";
+            
+            // Reset banner message fields
+            document.getElementById('banner-headline').value = "Salon-Quality Nails at Home";
+            document.getElementById('banner-subheadline').value = "Handcrafted luxury press-ons. Custom bundles available.";
+            document.getElementById('banner-button-text').value = "Shop Collection";
             
             newBannerUrl = "";
             currentEditThemeId = null;
