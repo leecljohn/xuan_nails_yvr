@@ -458,7 +458,6 @@
                 document.getElementById('admin-section').style.display = 'block';
                 document.getElementById('user-email').innerText = "Logged in as: " + user.email;
                 loadList();
-                loadSiteSettings();
                 loadThemesFromFirestore();
             } else {
                 document.getElementById('auth-section').style.display = 'block';
@@ -473,7 +472,6 @@
                 document.getElementById('admin-section').style.display = 'block';
                 document.getElementById('user-email').innerText = "⚠️ Testing Mode - Not Authenticated";
                 loadList();
-                loadSiteSettings();
                 loadThemesFromFirestore();
             }
         };
