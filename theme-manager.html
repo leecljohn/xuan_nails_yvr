@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Manager | Xuan Nails</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #d4a373; padding-bottom: 10px; }
+        
+        /* Form */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { height: 60px; font-family: monospace; }
+        
+        .btn { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; margin-right: 10px; }
+        .btn-add { background-color: #28a745; }
+        .btn-edit { background-color: #ffc107; color: #000; }
+        .btn-upload { background-color: #17a2b8; width: 100%; }
+        .btn-del { background-color: #dc3545; padding: 5px 10px; font-size: 12px; }
+        .btn-apply { background-color: #007bff; }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover {
+            color: #d4a373;
+        }
+        .tab-btn.active {
+            color: #d4a373;
+            border-bottom-color: #d4a373;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Image Upload Preview Area */
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        /* Theme Card */
+        .theme-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        .theme-card h3 {
+            margin-top: 0;
+            color: #d4a373;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .color-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .banner-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+        .banner-preview.show {
+            display: block;
+        }
+        
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .theme-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .theme-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .theme-banner {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        
+        .theme-info {
+            padding: 15px;
+        }
+        
+        .theme-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .theme-colors {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+        }
+        
+        .theme-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .theme-actions .btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            margin: 0;
+        }
+        
+        .active-theme {
+            border: 3px solid #28a745;
+        }
+        
+        .active-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+        
+        .hidden-input { display: none; }
+        
+        /* Preview Section */
+        .preview-section {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .preview-header {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+        .preview-hero {
+            text-align: center;
+            padding: 40px 20px;
+            background-size: cover;
+            background-position: center;
+            color: white;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .preview-btn {
+            background-color: var(--preview-primary, #d4a373);
+            color: white;
+            padding: 10px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🎨 Theme Manager</h2>
+        <p>Create and manage themes for your website. Changes are saved to Firebase.</p>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('create')">✏️ Create Theme</button>
+            <button class="tab-btn" onclick="switchTab('manage')">📋 Manage Themes</button>
+            <button class="tab-btn" onclick="switchTab('preview')">👁️ Preview</button>
+        </div>
+
+        <!-- CREATE THEME TAB -->
+        <div id="tab-create" class="tab-content active">
+            <div class="theme-card">
+                <h3>Create New Theme</h3>
+                
+                <div class="form-group">
+                    <label>Theme Name:</label>
+                    <input type="text" id="theme-name" placeholder="e.g., Christmas Theme">
+                </div>
+                
+                <div class="form-group">
+                    <label>Banner Image:</label>
+                    <div class="upload-area">
+                        <p>Click to select banner image</p>
+                        <input type="file" id="banner-upload" class="hidden-input" accept="image/*" onchange="handleBannerUpload(this)">
+                        <button class="btn btn-upload" onclick="document.getElementById('banner-upload').click()">📷 Select Banner Image</button>
+                        <div id="banner-upload-status" style="font-size:12px; color:#666; margin-top:5px;"></div>
+                    </div>
+                    <img id="new-banner-preview" class="banner-preview" alt="Banner Preview">
+                </div>
+
+                <div class="form-group">
+                    <label>Color Scheme:</label>
+                    <div class="color-input-group">
+                        <label style="margin:0; font-weight:normal;">Primary:</label>
+                        <input type="color" id="color-primary" value="#d4a373">
+                        <input type="text" id="color-primary-text" value="#d4a373" style="width:100px;">
+                    </div>
+                    <div class="color-input-group">
+                        <label style="margin:0; font-weight:normal;">Secondary:</label>
+                        <input type="color" id="color-secondary" value="#faedcd">
+                        <input type="text" id="color-secondary-text" value="#faedcd" style="width:100px;">
+                    </div>
+                    <div class="color-input-group">
+                        <label style="margin:0; font-weight:normal;">Accent:</label>
+                        <input type="color" id="color-accent" value="#b08968">
+                        <input type="text" id="color-accent-text" value="#b08968" style="width:100px;">
+                    </div>
+                </div>
+
+                <button class="btn btn-add" id="btn-save-theme" onclick="saveTheme()">Create Theme</button>
+                <button class="btn" style="background:#999;" onclick="resetThemeForm()">Clear Form</button>
+            </div>
+        </div>
+
+        <!-- MANAGE THEMES TAB -->
+        <div id="tab-manage" class="tab-content">
+            <h3>Available Themes</h3>
+            <p>Click "Apply" to set a theme as active for the website.</p>
+            <div class="theme-grid" id="theme-list">
+                <!-- Themes will be loaded here -->
+            </div>
+        </div>
+
+        <!-- PREVIEW TAB -->
+        <div id="tab-preview" class="tab-content">
+            <h3>Live Preview</h3>
+            <p>See how the active theme will look on your website.</p>
+            
+            <div class="preview-section">
+                <div class="preview-header">
+                    <span style="font-weight:bold; color:var(--preview-accent, #b08968);">XUAN NAILS YVR</span>
+                    <span style="color:var(--preview-primary, #d4a373);">Contact | Instagram</span>
+                </div>
+                <div class="preview-hero" id="preview-hero">
+                    <h1>Salon-Quality Nails at Home</h1>
+                    <p>Handcrafted luxury press-ons. Custom bundles available.</p>
+                    <a href="#" class="preview-btn">Shop Collection</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+        import { firebaseConfig } from './firebase-config.js';
+
+        // Error handling for module loading
+        window.addEventListener('error', (e) => {
+            console.error('Global error:', e);
+        });
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const storage = getStorage(app);
+
+        let newBannerUrl = "";
+        let currentEditThemeId = null;
+        let activeThemeId = null;
+        let availableThemes = [];
+
+        // Load themes from Firestore
+        function loadThemes() {
+            const q = query(collection(db, "themes"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                availableThemes = [];
+                snapshot.forEach((docSnap) => {
+                    const theme = docSnap.data();
+                    theme.id = docSnap.id;
+                    availableThemes.push(theme);
+                });
+                
+                renderThemeList();
+                loadActiveTheme();
+            });
+        }
+
+        // Load active theme from settings
+        async function loadActiveTheme() {
+            try {
+                const docRef = doc(db, "settings", "site-settings");
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const settings = docSnap.data();
+                    activeThemeId = settings.activeThemeId || null;
+                    renderThemeList();
+                    updatePreview(settings);
+                }
+            } catch (error) {
+                console.error("Error loading active theme:", error);
+            }
+        }
+
+        // Render theme list
+        function renderThemeList() {
+            const container = document.getElementById('theme-list');
+            container.innerHTML = "";
+            
+            if (availableThemes.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#666; grid-column:1/-1;'>No themes created yet. Go to 'Create Theme' to add one.</p>";
+                return;
+            }
+            
+            availableThemes.forEach((theme) => {
+                const isActive = theme.id === activeThemeId;
+                const div = document.createElement('div');
+                div.className = `theme-item ${isActive ? 'active-theme' : ''}`;
+                div.innerHTML = `
+                    <img src="${theme.bannerUrl}" alt="${theme.name}" class="theme-banner">
+                    <div class="theme-info">
+                        <div class="theme-name">
+                            ${theme.name}
+                            ${isActive ? '<span class="active-badge">Active</span>' : ''}
+                        </div>
+                        <div class="theme-colors">
+                            <div class="color-swatch" style="background:${theme.colors.primary}" title="Primary"></div>
+                            <div class="color-swatch" style="background:${theme.colors.secondary}" title="Secondary"></div>
+                            <div class="color-swatch" style="background:${theme.colors.accent}" title="Accent"></div>
+                        </div>
+                        <div class="theme-actions">
+                            <button class="btn btn-apply" onclick="applyTheme('${theme.id}')">Apply</button>
+                            <button class="btn btn-edit" onclick="editTheme('${theme.id}')">Edit</button>
+                            <button class="btn btn-del" onclick="deleteTheme('${theme.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Handle banner upload
+        window.handleBannerUpload = async (input) => {
+            const file = input.files[0];
+            if (!file) return;
+
+            const statusDiv = document.getElementById('banner-upload-status');
+            statusDiv.innerText = "Uploading banner... Please wait.";
+
+            const fileName = "banner_" + Date.now() + "_" + file.name;
+            const storageRef = ref(storage, 'themes/' + fileName);
+
+            try {
+                const snapshot = await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(snapshot.ref);
+                newBannerUrl = url;
+                
+                const preview = document.getElementById('new-banner-preview');
+                preview.src = url;
+                preview.classList.add('show');
+                
+                statusDiv.innerText = "Banner uploaded!";
+                input.value = "";
+            } catch (error) {
+                console.error("Banner upload failed", error);
+                alert("Failed to upload banner");
+                statusDiv.innerText = "";
+            }
+        };
+
+        // Save theme
+        window.saveTheme = async () => {
+            const name = document.getElementById('theme-name').value;
+            const primary = document.getElementById('color-primary').value;
+            const secondary = document.getElementById('color-secondary').value;
+            const accent = document.getElementById('color-accent').value;
+            
+            if (!name) {
+                alert("Please enter a theme name");
+                return;
+            }
+            
+            if (!newBannerUrl && !currentEditThemeId) {
+                alert("Please upload a banner image first");
+                return;
+            }
+
+            const colors = { primary, secondary, accent };
+            const data = {
+                name: name,
+                bannerUrl: newBannerUrl,
+                colors: colors,
+                timestamp: Date.now()
+            };
+
+            try {
+                if (currentEditThemeId) {
+                    // If editing and no new banner, keep existing banner
+                    if (!newBannerUrl) {
+                        const existingTheme = availableThemes.find(t => t.id === currentEditThemeId);
+                        if (existingTheme) {
+                            data.bannerUrl = existingTheme.bannerUrl;
+                        }
+                    }
+                    await updateDoc(doc(db, "themes", currentEditThemeId), data);
+                    alert("Theme updated successfully!");
+                } else {
+                    await addDoc(collection(db, "themes"), data);
+                    alert("Theme created successfully!");
+                }
+                resetThemeForm();
+            } catch (error) {
+                console.error("Error saving theme:", error);
+                alert("Failed to save theme");
+            }
+        };
+
+        // Edit theme
+        window.editTheme = async (themeId) => {
+            const theme = availableThemes.find(t => t.id === themeId);
+            if (!theme) return;
+
+            currentEditThemeId = themeId;
+            newBannerUrl = ""; // Reset new banner URL
+
+            document.getElementById('theme-name').value = theme.name;
+            document.getElementById('color-primary').value = theme.colors.primary;
+            document.getElementById('color-primary-text').value = theme.colors.primary;
+            document.getElementById('color-secondary').value = theme.colors.secondary;
+            document.getElementById('color-secondary-text').value = theme.colors.secondary;
+            document.getElementById('color-accent').value = theme.colors.accent;
+            document.getElementById('color-accent-text').value = theme.colors.accent;
+
+            // Show existing banner preview
+            const preview = document.getElementById('new-banner-preview');
+            preview.src = theme.bannerUrl;
+            preview.classList.add('show');
+
+            const btn = document.getElementById('btn-save-theme');
+            btn.innerText = "Update Theme";
+            btn.classList.remove('btn-add');
+            btn.classList.add('btn-edit');
+
+            switchTab('create');
+            window.scrollTo(0, 0);
+        };
+
+        // Delete theme
+        window.deleteTheme = async (themeId) => {
+            if (confirm("Are you sure you want to delete this theme?")) {
+                try {
+                    await deleteDoc(doc(db, "themes", themeId));
+                    alert("Theme deleted successfully!");
+                } catch (error) {
+                    console.error("Error deleting theme:", error);
+                    alert("Failed to delete theme");
+                }
+            }
+        };
+
+        // Apply theme
+        window.applyTheme = async (themeId) => {
+            const theme = availableThemes.find(t => t.id === themeId);
+            if (!theme) return;
+
+            try {
+                await setDoc(doc(db, "settings", "site-settings"), {
+                    activeThemeId: themeId,
+                    bannerUrl: theme.bannerUrl,
+                    colors: theme.colors,
+                    timestamp: Date.now()
+                });
+                alert("Theme applied successfully!");
+            } catch (error) {
+                console.error("Error applying theme:", error);
+                alert("Failed to apply theme");
+            }
+        };
+
+        // Update preview
+        function updatePreview(settings) {
+            const root = document.documentElement;
+            
+            if (settings.colors) {
+                root.style.setProperty('--preview-primary', settings.colors.primary);
+                root.style.setProperty('--preview-secondary', settings.colors.secondary);
+                root.style.setProperty('--preview-accent', settings.colors.accent);
+            }
+            
+            if (settings.bannerUrl) {
+                const hero = document.getElementById('preview-hero');
+                hero.style.background = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${settings.bannerUrl}')`;
+                hero.style.backgroundSize = 'cover';
+                hero.style.backgroundPosition = 'center';
+            }
+        }
+
+        // Reset theme form
+        window.resetThemeForm = () => {
+            document.getElementById('theme-name').value = "";
+            document.getElementById('color-primary').value = "#d4a373";
+            document.getElementById('color-primary-text').value = "#d4a373";
+            document.getElementById('color-secondary').value = "#faedcd";
+            document.getElementById('color-secondary-text').value = "#faedcd";
+            document.getElementById('color-accent').value = "#b08968";
+            document.getElementById('color-accent-text').value = "#b08968";
+            
+            newBannerUrl = "";
+            currentEditThemeId = null;
+            
+            const preview = document.getElementById('new-banner-preview');
+            preview.classList.remove('show');
+            document.getElementById('banner-upload-status').innerText = "";
+            
+            const btn = document.getElementById('btn-save-theme');
+            btn.innerText = "Create Theme";
+            btn.classList.remove('btn-edit');
+            btn.classList.add('btn-add');
+        };
+
+        // Switch tabs - make it global for onclick handlers
+        window.switchTab = (tabName) => {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            if (tabName === 'create') {
+                buttons[0].classList.add('active');
+            } else if (tabName === 'manage') {
+                buttons[1].classList.add('active');
+            } else {
+                buttons[2].classList.add('active');
+            }
+        };
+
+        // Sync color inputs
+        document.addEventListener('DOMContentLoaded', () => {
+            const colorInputs = [
+                { picker: 'color-primary', text: 'color-primary-text' },
+                { picker: 'color-secondary', text: 'color-secondary-text' },
+                { picker: 'color-accent', text: 'color-accent-text' }
+            ];
+
+            colorInputs.forEach(({ picker, text }) => {
+                const pickerEl = document.getElementById(picker);
+                const textEl = document.getElementById(text);
+
+                pickerEl.addEventListener('input', () => {
+                    textEl.value = pickerEl.value;
+                });
+
+                textEl.addEventListener('input', () => {
+                    if (/^#[0-9A-Fa-f]{6}$/.test(textEl.value)) {
+                        pickerEl.value = textEl.value;
+                    }
+                });
+            });
+
+            // Load themes on page load
+            loadThemes();
+        });
+        } catch (error) {
+            console.error('Error initializing Firebase:', error);
+            alert('Error initializing Firebase. Please check the console for details.');
+        }
+    </script>
+</body>
+</html>

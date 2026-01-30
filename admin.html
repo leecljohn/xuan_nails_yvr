@@ -173,6 +173,81 @@
             text-overflow: ellipsis;
         }
 
+        /* Theme Grid */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .theme-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .theme-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .theme-banner {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        
+        .theme-info {
+            padding: 15px;
+        }
+        
+        .theme-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .theme-colors {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+        }
+        
+        .theme-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .theme-actions .btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            margin: 0;
+        }
+        
+        .btn-apply { background-color: #007bff; }
+        
+        .active-theme {
+            border: 3px solid #28a745;
+        }
+        
+        .active-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
         #auth-section { display: block; }
         #admin-section { display: none; }
         .hidden-input { display: none; }
@@ -197,8 +272,8 @@
             <!-- TABS -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('products')">📦 Product Manager</button>
-                <button class="tab-btn" onclick="switchTab('banners')">🖼 Banner Manager</button>
-                <button class="tab-btn" onclick="switchTab('settings')">🎨 Site Settings</button>
+                <button class="tab-btn" onclick="switchTab('themes')">🎨 Theme Manager</button>
+                <button class="tab-btn" onclick="switchTab('settings')">⚙️ Site Settings</button>
             </div>
 
             <!-- PRODUCTS TAB -->
@@ -257,15 +332,16 @@
             <div id="product-list"></div>
             </div>
 
-            <!-- BANNERS TAB -->
-            <div id="tab-banners" class="tab-content">
-                <h3>Banner Manager</h3>
+            <!-- THEMES TAB -->
+            <div id="tab-themes" class="tab-content">
+                <h3>Theme Manager</h3>
+                <p>Create and manage themes. Each theme includes a banner and color scheme.</p>
                 
                 <div class="settings-section">
-                    <h4>Add New Banner</h4>
+                    <h4>Create New Theme</h4>
                     <div class="form-group">
-                        <label>Banner Name:</label>
-                        <input type="text" id="banner-name" placeholder="e.g., Christmas Theme">
+                        <label>Theme Name:</label>
+                        <input type="text" id="theme-name" placeholder="e.g., Christmas Theme">
                     </div>
                     <div class="form-group">
                         <label>Banner Image:</label>
@@ -275,35 +351,7 @@
                             <button class="btn btn-upload" onclick="document.getElementById('banner-upload').click()">📷 Select Banner Image</button>
                             <div id="banner-upload-status" style="font-size:12px; color:#666; margin-top:5px;"></div>
                         </div>
-                        <img id="new-banner-preview" class="banner-preview" alt="New Banner Preview">
-                    </div>
-                    <button class="btn btn-add" onclick="saveBanner()">Add Banner</button>
-                </div>
-
-                <div class="settings-section">
-                    <h4>Available Banners</h4>
-                    <div class="banner-options" id="banner-list">
-                        <!-- Banners will be loaded here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- SETTINGS TAB -->
-            <div id="tab-settings" class="tab-content">
-                <h3>Site Settings</h3>
-                
-                <div class="settings-section">
-                    <div class="form-group">
-                        <label>Active Banner:</label>
-                        <p style="font-size:12px; color:#666; margin-bottom:10px;">Select a banner from available options below:</p>
-                        
-                        <!-- Banner Options Grid -->
-                        <div class="banner-options" id="banner-options">
-                            <!-- Banner options will be loaded here -->
-                        </div>
-                        
-                        <!-- Preview -->
-                        <img id="banner-preview" class="banner-preview" alt="Banner Preview">
+                        <img id="new-banner-preview" class="banner-preview" alt="Banner Preview">
                     </div>
 
                     <div class="form-group">
@@ -325,7 +373,28 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-settings" onclick="saveSiteSettings()">Save Site Settings</button>
+                    <button class="btn btn-add" id="btn-save-theme" onclick="saveTheme()">Create Theme</button>
+                    <button class="btn" style="background:#999;" onclick="resetThemeForm()">Clear Form</button>
+                </div>
+
+                <div class="settings-section">
+                    <h4>Available Themes</h4>
+                    <div class="theme-grid" id="theme-list">
+                        <!-- Themes will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS TAB -->
+            <div id="tab-settings" class="tab-content">
+                <h3>Site Settings</h3>
+                <p>View and apply the active theme for your website.</p>
+                
+                <div class="settings-section">
+                    <h4>Active Theme</h4>
+                    <div id="active-theme-display">
+                        <!-- Active theme will be displayed here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -347,10 +416,11 @@
 
         let currentEditDocId = null;
         let currentImageUrls = []; // Array to store URLs for product being edited/added
-        let currentBannerUrl = ""; // Current banner URL
         let settingsDocId = "site-settings"; // Fixed ID for settings document
         let newBannerUrl = ""; // URL for new banner being uploaded
-        let availableBanners = []; // Will be loaded from Firestore
+        let availableThemes = []; // Will be loaded from Firestore
+        let currentEditThemeId = null; // ID of theme being edited
+        let activeThemeId = null; // ID of currently active theme
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -359,7 +429,7 @@
                 document.getElementById('user-email').innerText = "Logged in as: " + user.email;
                 loadList();
                 loadSiteSettings();
-                loadBannersFromFirestore();
+                loadThemesFromFirestore();
             } else {
                 document.getElementById('auth-section').style.display = 'block';
                 document.getElementById('admin-section').style.display = 'none';
@@ -374,7 +444,7 @@
                 document.getElementById('user-email').innerText = "⚠️ Testing Mode - Not Authenticated";
                 loadList();
                 loadSiteSettings();
-                loadBannersFromFirestore();
+                loadThemesFromFirestore();
             }
         };
 
@@ -395,7 +465,7 @@
             const buttons = document.querySelectorAll('.tab-btn');
             if (tabName === 'products') {
                 buttons[0].classList.add('active');
-            } else if (tabName === 'banners') {
+            } else if (tabName === 'themes') {
                 buttons[1].classList.add('active');
             } else {
                 buttons[2].classList.add('active');
@@ -461,55 +531,114 @@
             renderPreviews();
         };
 
-        // LOAD BANNERS FROM FIRESTORE
-        function loadBannersFromFirestore() {
-            const q = query(collection(db, "banners"), orderBy("timestamp", "desc"));
+        // LOAD THEMES FROM FIRESTORE
+        function loadThemesFromFirestore() {
+            const q = query(collection(db, "themes"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
-                availableBanners = [];
+                availableThemes = [];
                 snapshot.forEach((docSnap) => {
-                    const banner = docSnap.data();
-                    banner.id = docSnap.id;
-                    availableBanners.push(banner);
+                    const theme = docSnap.data();
+                    theme.id = docSnap.id;
+                    availableThemes.push(theme);
                 });
                 
-                // Update both banner lists
-                renderBannerOptions();
-                renderBannerList();
+                renderThemeList();
+                loadActiveTheme();
             });
         }
 
-        // RENDER BANNER OPTIONS (for settings tab)
-        function renderBannerOptions() {
-            const container = document.getElementById('banner-options');
+        // LOAD ACTIVE THEME
+        async function loadActiveTheme() {
+            try {
+                const docRef = doc(db, "settings", settingsDocId);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const settings = docSnap.data();
+                    activeThemeId = settings.activeThemeId || null;
+                    renderThemeList();
+                    renderActiveThemeDisplay();
+                }
+            } catch (error) {
+                console.error("Error loading active theme:", error);
+            }
+        }
+
+        // RENDER THEME LIST
+        function renderThemeList() {
+            const container = document.getElementById('theme-list');
             container.innerHTML = "";
             
-            availableBanners.forEach((banner) => {
+            if (availableThemes.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#666; grid-column:1/-1;'>No themes created yet. Create one above.</p>";
+                return;
+            }
+            
+            availableThemes.forEach((theme) => {
+                const isActive = theme.id === activeThemeId;
                 const div = document.createElement('div');
-                div.className = 'banner-option';
+                div.className = `theme-item ${isActive ? 'active-theme' : ''}`;
                 div.innerHTML = `
-                    <img src="${banner.url}" alt="${banner.name}">
-                    <div class="banner-option-name">${banner.name}</div>
+                    <img src="${theme.bannerUrl}" alt="${theme.name}" class="theme-banner">
+                    <div class="theme-info">
+                        <div class="theme-name">
+                            ${theme.name}
+                            ${isActive ? '<span class="active-badge">Active</span>' : ''}
+                        </div>
+                        <div class="theme-colors">
+                            <div class="color-swatch" style="background:${theme.colors.primary}" title="Primary"></div>
+                            <div class="color-swatch" style="background:${theme.colors.secondary}" title="Secondary"></div>
+                            <div class="color-swatch" style="background:${theme.colors.accent}" title="Accent"></div>
+                        </div>
+                        <div class="theme-actions">
+                            <button class="btn btn-apply" onclick="applyTheme('${theme.id}')">Apply</button>
+                            <button class="btn btn-edit" onclick="editTheme('${theme.id}')">Edit</button>
+                            <button class="btn btn-del" onclick="deleteTheme('${theme.id}')">Delete</button>
+                        </div>
+                    </div>
                 `;
-                div.onclick = () => selectBanner(banner.url, div);
                 container.appendChild(div);
             });
         }
 
-        // RENDER BANNER LIST (for banner manager tab)
-        function renderBannerList() {
-            const container = document.getElementById('banner-list');
-            container.innerHTML = "";
+        // RENDER ACTIVE THEME DISPLAY
+        function renderActiveThemeDisplay() {
+            const container = document.getElementById('active-theme-display');
             
-            availableBanners.forEach((banner) => {
-                const div = document.createElement('div');
-                div.className = 'banner-option';
-                div.innerHTML = `
-                    <img src="${banner.url}" alt="${banner.name}">
-                    <div class="banner-option-name">${banner.name}</div>
-                    <button class="remove-img" onclick="deleteBanner('${banner.id}')">Delete</button>
-                `;
-                container.appendChild(div);
-            });
+            if (!activeThemeId) {
+                container.innerHTML = "<p style='color:#666;'>No active theme selected. Go to Theme Manager to create and apply a theme.</p>";
+                return;
+            }
+            
+            const activeTheme = availableThemes.find(t => t.id === activeThemeId);
+            if (!activeTheme) {
+                container.innerHTML = "<p style='color:#666;'>Active theme not found.</p>";
+                return;
+            }
+            
+            container.innerHTML = `
+                <div style="display:flex; gap:20px; align-items:flex-start;">
+                    <img src="${activeTheme.bannerUrl}" alt="${activeTheme.name}" style="width:200px; height:120px; object-fit:cover; border-radius:4px;">
+                    <div style="flex:1;">
+                        <h4 style="margin:0 0 10px; color:#d4a373;">${activeTheme.name} <span class="active-badge">Active</span></h4>
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <div class="color-swatch" style="background:${activeTheme.colors.primary}"></div>
+                                <span style="font-size:12px;">Primary</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <div class="color-swatch" style="background:${activeTheme.colors.secondary}"></div>
+                                <span style="font-size:12px;">Secondary</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <div class="color-swatch" style="background:${activeTheme.colors.accent}"></div>
+                                <span style="font-size:12px;">Accent</span>
+                            </div>
+                        </div>
+                        <p style="font-size:12px; color:#666; margin:0;">This theme is currently applied to your website.</p>
+                    </div>
+                </div>
+            `;
         }
 
         // HANDLE BANNER UPLOAD
@@ -521,19 +650,18 @@
             statusDiv.innerText = "Uploading banner... Please wait.";
 
             const fileName = "banner_" + Date.now() + "_" + file.name;
-            const storageRef = ref(storage, 'banners/' + fileName);
+            const storageRef = ref(storage, 'themes/' + fileName);
 
             try {
                 const snapshot = await uploadBytes(storageRef, file);
                 const url = await getDownloadURL(snapshot.ref);
                 newBannerUrl = url;
                 
-                // Show preview
                 const preview = document.getElementById('new-banner-preview');
                 preview.src = url;
                 preview.classList.add('show');
                 
-                statusDiv.innerText = "Banner uploaded! Enter a name and click 'Add Banner'.";
+                statusDiv.innerText = "Banner uploaded!";
                 input.value = "";
             } catch (error) {
                 console.error("Banner upload failed", error);
@@ -542,132 +670,135 @@
             }
         };
 
-        // SAVE BANNER TO FIRESTORE
-        window.saveBanner = async () => {
-            const name = document.getElementById('banner-name').value;
+        // SAVE THEME
+        window.saveTheme = async () => {
+            const name = document.getElementById('theme-name').value;
+            const primary = document.getElementById('color-primary').value;
+            const secondary = document.getElementById('color-secondary').value;
+            const accent = document.getElementById('color-accent').value;
             
             if (!name) {
-                alert("Please enter a banner name");
+                alert("Please enter a theme name");
                 return;
             }
             
-            if (!newBannerUrl) {
+            if (!newBannerUrl && !currentEditThemeId) {
                 alert("Please upload a banner image first");
                 return;
             }
 
-            try {
-                await addDoc(collection(db, "banners"), {
-                    name: name,
-                    url: newBannerUrl,
-                    timestamp: Date.now()
-                });
-                
-                alert("Banner added successfully!");
-                
-                // Reset form
-                document.getElementById('banner-name').value = "";
-                newBannerUrl = "";
-                document.getElementById('new-banner-preview').classList.remove('show');
-                document.getElementById('banner-upload-status').innerText = "";
-            } catch (error) {
-                console.error("Error saving banner:", error);
-                alert("Failed to save banner");
-            }
-        };
-
-        // DELETE BANNER
-        window.deleteBanner = async (bannerId) => {
-            if (confirm("Are you sure you want to delete this banner?")) {
-                try {
-                    await deleteDoc(doc(db, "banners", bannerId));
-                    alert("Banner deleted successfully!");
-                } catch (error) {
-                    console.error("Error deleting banner:", error);
-                    alert("Failed to delete banner");
-                }
-            }
-        };
-
-        // SELECT BANNER
-        function selectBanner(url, element) {
-            currentBannerUrl = url;
-            
-            // Update preview
-            const preview = document.getElementById('banner-preview');
-            preview.src = url;
-            preview.classList.add('show');
-            
-            // Update selected state
-            document.querySelectorAll('.banner-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            element.classList.add('selected');
-        }
-
-        // LOAD SITE SETTINGS
-        async function loadSiteSettings() {
-            try {
-                const docRef = doc(db, "settings", settingsDocId);
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    const settings = docSnap.data();
-                    
-                    // Load banner
-                    if (settings.bannerUrl) {
-                        currentBannerUrl = settings.bannerUrl;
-                        const preview = document.getElementById('banner-preview');
-                        preview.src = settings.bannerUrl;
-                        preview.classList.add('show');
-                        
-                        // Highlight selected banner
-                        setTimeout(() => {
-                            document.querySelectorAll('#banner-options .banner-option').forEach(opt => {
-                                opt.classList.remove('selected');
-                                if (opt.querySelector('img').src === settings.bannerUrl) {
-                                    opt.classList.add('selected');
-                                }
-                            });
-                        }, 100);
-                    }
-                    
-                    // Load colors
-                    if (settings.colors) {
-                        document.getElementById('color-primary').value = settings.colors.primary || '#d4a373';
-                        document.getElementById('color-primary-text').value = settings.colors.primary || '#d4a373';
-                        document.getElementById('color-secondary').value = settings.colors.secondary || '#faedcd';
-                        document.getElementById('color-secondary-text').value = settings.colors.secondary || '#faedcd';
-                        document.getElementById('color-accent').value = settings.colors.accent || '#b08968';
-                        document.getElementById('color-accent-text').value = settings.colors.accent || '#b08968';
-                    }
-                }
-            } catch (error) {
-                console.error("Error loading settings:", error);
-            }
-        }
-
-        // SAVE SITE SETTINGS
-        window.saveSiteSettings = async () => {
-            const colors = {
-                primary: document.getElementById('color-primary').value,
-                secondary: document.getElementById('color-secondary').value,
-                accent: document.getElementById('color-accent').value
-            };
-
+            const colors = { primary, secondary, accent };
             const data = {
-                bannerUrl: currentBannerUrl,
+                name: name,
+                bannerUrl: newBannerUrl,
                 colors: colors,
                 timestamp: Date.now()
             };
 
             try {
-                await setDoc(doc(db, "settings", settingsDocId), data);
-                alert("Site settings saved successfully!");
-            } catch (e) {
-                console.error(e);
-                alert("Error saving site settings");
+                if (currentEditThemeId) {
+                    // If editing and no new banner, keep existing banner
+                    if (!newBannerUrl) {
+                        const existingTheme = availableThemes.find(t => t.id === currentEditThemeId);
+                        if (existingTheme) {
+                            data.bannerUrl = existingTheme.bannerUrl;
+                        }
+                    }
+                    await updateDoc(doc(db, "themes", currentEditThemeId), data);
+                    alert("Theme updated successfully!");
+                } else {
+                    await addDoc(collection(db, "themes"), data);
+                    alert("Theme created successfully!");
+                }
+                resetThemeForm();
+            } catch (error) {
+                console.error("Error saving theme:", error);
+                alert("Failed to save theme");
             }
+        };
+
+        // EDIT THEME
+        window.editTheme = async (themeId) => {
+            const theme = availableThemes.find(t => t.id === themeId);
+            if (!theme) return;
+
+            currentEditThemeId = themeId;
+            newBannerUrl = "";
+
+            document.getElementById('theme-name').value = theme.name;
+            document.getElementById('color-primary').value = theme.colors.primary;
+            document.getElementById('color-primary-text').value = theme.colors.primary;
+            document.getElementById('color-secondary').value = theme.colors.secondary;
+            document.getElementById('color-secondary-text').value = theme.colors.secondary;
+            document.getElementById('color-accent').value = theme.colors.accent;
+            document.getElementById('color-accent-text').value = theme.colors.accent;
+
+            const preview = document.getElementById('new-banner-preview');
+            preview.src = theme.bannerUrl;
+            preview.classList.add('show');
+
+            const btn = document.getElementById('btn-save-theme');
+            btn.innerText = "Update Theme";
+            btn.classList.remove('btn-add');
+            btn.classList.add('btn-edit');
+
+            switchTab('themes');
+            window.scrollTo(0, 0);
+        };
+
+        // DELETE THEME
+        window.deleteTheme = async (themeId) => {
+            if (confirm("Are you sure you want to delete this theme?")) {
+                try {
+                    await deleteDoc(doc(db, "themes", themeId));
+                    alert("Theme deleted successfully!");
+                } catch (error) {
+                    console.error("Error deleting theme:", error);
+                    alert("Failed to delete theme");
+                }
+            }
+        };
+
+        // APPLY THEME
+        window.applyTheme = async (themeId) => {
+            const theme = availableThemes.find(t => t.id === themeId);
+            if (!theme) return;
+
+            try {
+                await setDoc(doc(db, "settings", settingsDocId), {
+                    activeThemeId: themeId,
+                    bannerUrl: theme.bannerUrl,
+                    colors: theme.colors,
+                    timestamp: Date.now()
+                });
+                alert("Theme applied successfully!");
+            } catch (error) {
+                console.error("Error applying theme:", error);
+                alert("Failed to apply theme");
+            }
+        };
+
+        // RESET THEME FORM
+        window.resetThemeForm = () => {
+            document.getElementById('theme-name').value = "";
+            document.getElementById('color-primary').value = "#d4a373";
+            document.getElementById('color-primary-text').value = "#d4a373";
+            document.getElementById('color-secondary').value = "#faedcd";
+            document.getElementById('color-secondary-text').value = "#faedcd";
+            document.getElementById('color-accent').value = "#b08968";
+            document.getElementById('color-accent-text').value = "#b08968";
+            
+            newBannerUrl = "";
+            currentEditThemeId = null;
+            
+            const preview = document.getElementById('new-banner-preview');
+            preview.classList.remove('show');
+            document.getElementById('banner-upload-status').innerText = "";
+            
+            const btn = document.getElementById('btn-save-theme');
+            btn.innerText = "Create Theme";
+            btn.classList.remove('btn-edit');
+            btn.classList.add('btn-add');
         };
 
         // SYNC COLOR INPUTS

@@ -171,7 +171,7 @@
         const loading = document.getElementById('loading');
         const settingsDocId = "site-settings";
 
-        // Load site settings (banner and colors)
+        // Load site settings (banner and colors) from active theme
         async function loadSiteSettings() {
             try {
                 const docRef = doc(db, "settings", settingsDocId);
