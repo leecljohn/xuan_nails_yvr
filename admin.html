@@ -12,7 +12,7 @@
         /* Form */
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input[type="text"], input[type="number"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         textarea { height: 60px; font-family: monospace; }
         
         .btn { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; margin-right: 10px; }
@@ -137,6 +137,41 @@
         .banner-preview.show {
             display: block;
         }
+        .banner-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .banner-option {
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .banner-option:hover {
+            border-color: #d4a373;
+        }
+        .banner-option.selected {
+            border-color: #d4a373;
+            box-shadow: 0 0 0 2px rgba(212, 163, 115, 0.3);
+        }
+        .banner-option img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            display: block;
+        }
+        .banner-option-name {
+            font-size: 11px;
+            padding: 4px;
+            text-align: center;
+            background: #f0f0f0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
         #auth-section { display: block; }
         #admin-section { display: none; }
@@ -151,6 +186,7 @@
         <div id="auth-section">
             <h2>🔐 Admin Login</h2>
             <button class="btn btn-login" onclick="googleSignIn()">Sign in with Google</button>
+            <button class="btn" style="background:#666; margin-top:15px; width:100%;" onclick="skipLogin()">⚠️ Skip Login (Testing Only)</button>
         </div>
 
         <!-- ADMIN -->
@@ -227,12 +263,15 @@
                 <div class="settings-section">
                     <div class="form-group">
                         <label>Banner Image:</label>
-                        <div class="upload-area" style="padding: 15px;">
-                            <input type="file" id="banner-upload" class="hidden-input" accept="image/*" onchange="handleBannerUpload(this)">
-                            <button class="btn btn-upload" onclick="document.getElementById('banner-upload').click()">📷 Upload New Banner</button>
-                            <div id="banner-status" style="font-size:12px; color:#666; margin-top:5px;"></div>
-                            <img id="banner-preview" class="banner-preview" alt="Banner Preview">
+                        <p style="font-size:12px; color:#666; margin-bottom:10px;">Select a banner from available options below:</p>
+                        
+                        <!-- Banner Options Grid -->
+                        <div class="banner-options" id="banner-options">
+                            <!-- Banner options will be loaded here -->
                         </div>
+                        
+                        <!-- Preview -->
+                        <img id="banner-preview" class="banner-preview" alt="Banner Preview">
                     </div>
 
                     <div class="form-group">
@@ -275,9 +314,29 @@
         const storage = getStorage(app); // Initialize Storage
 
         let currentEditDocId = null;
-        let currentImageUrls = []; // Array to store URLs for the product being edited/added
+        let currentImageUrls = []; // Array to store URLs for product being edited/added
         let currentBannerUrl = ""; // Current banner URL
         let settingsDocId = "site-settings"; // Fixed ID for settings document
+        
+        // Available banner images (you can add more URLs here)
+        const availableBanners = [
+            {
+                name: "Default Banner",
+                url: "https://raw.githubusercontent.com/leecljohn/xuan_nails_yvr/refs/heads/main/images/index/XNY%20Banner.png"
+            },
+            {
+                name: "CNY Theme",
+                url: "https://raw.githubusercontent.com/leecljohn/xuan_nails_yvr/refs/heads/main/images/index/XNY%20Logo%20-%20CNY.png"
+            },
+            {
+                name: "Easter Theme",
+                url: "https://raw.githubusercontent.com/leecljohn/xuan_nails_yvr/refs/heads/main/images/index/XNY%20Logo%20-%20Easter.png"
+            },
+            {
+                name: "Graduation Theme",
+                url: "https://raw.githubusercontent.com/leecljohn/xuan_nails_yvr/refs/heads/main/images/index/XNY%20Logo%20-%20Grad.png"
+            }
+        ];
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -286,11 +345,24 @@
                 document.getElementById('user-email').innerText = "Logged in as: " + user.email;
                 loadList();
                 loadSiteSettings();
+                loadBannerOptions();
             } else {
                 document.getElementById('auth-section').style.display = 'block';
                 document.getElementById('admin-section').style.display = 'none';
             }
         });
+
+        // SKIP LOGIN FOR TESTING
+        window.skipLogin = () => {
+            if (confirm("⚠️ WARNING: This bypasses authentication for testing purposes only.\n\nDo not use this in production!\n\nContinue?")) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'block';
+                document.getElementById('user-email').innerText = "⚠️ Testing Mode - Not Authenticated";
+                loadList();
+                loadSiteSettings();
+                loadBannerOptions();
+            }
+        };
 
         // SWITCH TABS
         window.switchTab = (tabName) => {
@@ -373,35 +445,38 @@
             renderPreviews();
         };
 
-        // HANDLE BANNER UPLOAD
-        window.handleBannerUpload = async (input) => {
-            const file = input.files[0];
-            if (!file) return;
+        // LOAD BANNER OPTIONS
+        function loadBannerOptions() {
+            const container = document.getElementById('banner-options');
+            container.innerHTML = "";
+            
+            availableBanners.forEach((banner, index) => {
+                const div = document.createElement('div');
+                div.className = 'banner-option';
+                div.innerHTML = `
+                    <img src="${banner.url}" alt="${banner.name}">
+                    <div class="banner-option-name">${banner.name}</div>
+                `;
+                div.onclick = () => selectBanner(banner.url, div);
+                container.appendChild(div);
+            });
+        }
 
-            const statusDiv = document.getElementById('banner-status');
-            statusDiv.innerText = "Uploading banner... Please wait.";
-
-            const fileName = "banner_" + Date.now() + "_" + file.name;
-            const storageRef = ref(storage, 'site/' + fileName);
-
-            try {
-                const snapshot = await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(snapshot.ref);
-                currentBannerUrl = url;
-                
-                // Show preview
-                const preview = document.getElementById('banner-preview');
-                preview.src = url;
-                preview.classList.add('show');
-                
-                statusDiv.innerText = "Banner uploaded! Click 'Save Site Settings' to apply.";
-                input.value = "";
-            } catch (error) {
-                console.error("Banner upload failed", error);
-                alert("Failed to upload banner");
-                statusDiv.innerText = "";
-            }
-        };
+        // SELECT BANNER
+        function selectBanner(url, element) {
+            currentBannerUrl = url;
+            
+            // Update preview
+            const preview = document.getElementById('banner-preview');
+            preview.src = url;
+            preview.classList.add('show');
+            
+            // Update selected state
+            document.querySelectorAll('.banner-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
 
         // LOAD SITE SETTINGS
         async function loadSiteSettings() {
@@ -418,6 +493,16 @@
                         const preview = document.getElementById('banner-preview');
                         preview.src = settings.bannerUrl;
                         preview.classList.add('show');
+                        
+                        // Highlight selected banner
+                        setTimeout(() => {
+                            document.querySelectorAll('.banner-option').forEach(opt => {
+                                opt.classList.remove('selected');
+                                if (opt.querySelector('img').src === settings.bannerUrl) {
+                                    opt.classList.add('selected');
+                                }
+                            });
+                        }, 100);
                     }
                     
                     // Load colors

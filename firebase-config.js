@@ -2,7 +2,7 @@
 // This file contains sensitive Firebase configuration
 // Add this file to .gitignore to keep it out of public repositories
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyBp7OWmjMNMt0x9OiVg5ySRaC6Z4MhPGSM",
   authDomain: "xuannailsyvr-c7514.firebaseapp.com",
   projectId: "xuannailsyvr-c7514",
