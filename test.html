@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Theme Manager (TEST) | Xuan Nails</title>
+    <title>Theme Manager (TEST PREVIEW) | Xuan Nails</title>
     <style>
         body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -217,8 +217,8 @@
 <body>
 
     <div class="container">
-        <h2>🎨 Theme Manager (TEST)</h2>
-        <p><strong>TEST MODE:</strong> Create and manage themes for your website. Each theme includes a banner, color scheme, and banner message.</p>
+        <h2>🎨 Theme Manager (TEST PREVIEW)</h2>
+        <p><strong>STATIC PREVIEW ONLY:</strong> This is a visual preview of the theme manager UI. No backend functionality is connected.</p>
 
         <!-- TABS -->
         <div class="tabs">
@@ -241,11 +241,8 @@
                     <label>Banner Image:</label>
                     <div class="upload-area">
                         <p>Click to select banner image</p>
-                        <input type="file" id="banner-upload" class="hidden-input" accept="image/*" onchange="handleBannerUpload(this)">
-                        <button class="btn btn-upload" onclick="document.getElementById('banner-upload').click()">📷 Select Banner Image</button>
-                        <div id="banner-upload-status" style="font-size:12px; color:#666; margin-top:5px;"></div>
+                        <button class="btn btn-upload">📷 Select Banner Image</button>
                     </div>
-                    <img id="new-banner-preview" class="banner-preview" alt="Banner Preview">
                 </div>
 
                 <div class="form-group">
@@ -283,8 +280,8 @@
                     </div>
                 </div>
 
-                <button class="btn btn-add" id="btn-save-theme" onclick="saveTheme()">Create Theme</button>
-                <button class="btn" style="background:#999;" onclick="resetThemeForm()">Clear Form</button>
+                <button class="btn btn-add">Create Theme</button>
+                <button class="btn" style="background:#999;">Clear Form</button>
             </div>
         </div>
 
@@ -293,7 +290,25 @@
             <h3>Available Themes</h3>
             <p>Click "Edit" to modify a theme or "Delete" to remove it.</p>
             <div class="theme-grid" id="theme-list">
-                <!-- Themes will be loaded here -->
+                <!-- Sample theme item for preview -->
+                <div class="theme-item active-theme">
+                    <img src="https://placehold.co/400x200/d4a373/white?text=Banner+Preview" alt="Sample Theme" class="theme-banner">
+                    <div class="theme-info">
+                        <div class="theme-name">
+                            Sample Theme <span class="active-badge">Active</span>
+                        </div>
+                        <div class="theme-colors">
+                            <div class="color-swatch" style="background:#d4a373" title="Primary"></div>
+                            <div class="color-swatch" style="background:#faedcd" title="Secondary"></div>
+                            <div class="color-swatch" style="background:#b08968" title="Accent"></div>
+                        </div>
+                        <div class="theme-actions">
+                            <button class="btn btn-apply">Apply</button>
+                            <button class="btn btn-edit">Edit</button>
+                            <button class="btn btn-del">Delete</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -305,7 +320,34 @@
             <div class="theme-card">
                 <h4>Active Theme</h4>
                 <div id="active-theme-display">
-                    <!-- Active theme will be displayed here -->
+                    <!-- Sample active theme for preview -->
+                    <div style="display:flex; gap:20px; align-items:flex-start;">
+                        <img src="https://placehold.co/400x200/d4a373/white?text=Banner+Preview" alt="Sample Theme" style="width:200px; height:120px; object-fit:cover; border-radius:4px;">
+                        <div style="flex:1;">
+                            <h4 style="margin:0 0 10px; color:#d4a373;">Sample Theme <span class="active-badge">Active</span></h4>
+                            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                                <div style="display:flex; align-items:center; gap:5px;">
+                                    <div class="color-swatch" style="background:#d4a373"></div>
+                                    <span style="font-size:12px;">Primary</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:5px;">
+                                    <div class="color-swatch" style="background:#faedcd"></div>
+                                    <span style="font-size:12px;">Secondary</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:5px;">
+                                    <div class="color-swatch" style="background:#b08968"></div>
+                                    <span style="font-size:12px;">Accent</span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:10px;">
+                                <strong>Banner Message:</strong>
+                                <p style="font-size:14px; color:#666; margin:5px 0;">Salon-Quality Nails at Home</p>
+                                <p style="font-size:13px; color:#888; margin:0;">Handcrafted luxury press-ons. Custom bundles available.</p>
+                                <p style="font-size:13px; color:#888; margin:0;">Button: "Shop Collection"</p>
+                            </div>
+                            <p style="font-size:12px; color:#666; margin:0;">This theme is currently applied to your website.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -313,7 +355,23 @@
                 <h4>Apply a Theme</h4>
                 <p>Click "Apply" on any theme below to make it active on your website.</p>
                 <div class="theme-grid" id="theme-select-list">
-                    <!-- Themes for selection will be loaded here -->
+                    <!-- Sample theme for preview -->
+                    <div class="theme-item active-theme">
+                        <img src="https://placehold.co/400x200/d4a373/white?text=Banner+Preview" alt="Sample Theme" class="theme-banner">
+                        <div class="theme-info">
+                            <div class="theme-name">
+                                Sample Theme <span class="active-badge">Active</span>
+                            </div>
+                            <div class="theme-colors">
+                                <div class="color-swatch" style="background:#d4a373" title="Primary"></div>
+                                <div class="color-swatch" style="background:#faedcd" title="Secondary"></div>
+                                <div class="color-swatch" style="background:#b08968" title="Accent"></div>
+                            </div>
+                            <div class="theme-actions">
+                                <button class="btn btn-apply">Apply</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -337,396 +395,8 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
-        import { firebaseConfig } from './firebase-config.js';
-
-        // Error handling for module loading
-        window.addEventListener('error', (e) => {
-            console.error('Global error:', e);
-        });
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const storage = getStorage(app);
-
-        let newBannerUrl = "";
-        let currentEditThemeId = null;
-        let activeThemeId = null;
-        let availableThemes = [];
-
-        // Load themes from Firestore
-        function loadThemes() {
-            const q = query(collection(db, "themes"), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snapshot) => {
-                availableThemes = [];
-                snapshot.forEach((docSnap) => {
-                    const theme = docSnap.data();
-                    theme.id = docSnap.id;
-                    availableThemes.push(theme);
-                });
-                
-                renderThemeList();
-                renderThemeSelectList();
-                loadActiveTheme();
-            });
-        }
-
-        // Load active theme from settings
-        async function loadActiveTheme() {
-            try {
-                const docRef = doc(db, "settings", "site-settings");
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    const settings = docSnap.data();
-                    activeThemeId = settings.activeThemeId || null;
-                    renderThemeList();
-                    renderThemeSelectList();
-                    renderActiveThemeDisplay();
-                    updatePreview(settings);
-                }
-            } catch (error) {
-                console.error("Error loading active theme:", error);
-            }
-        }
-
-        // Render theme selection list (for Site Settings tab)
-        function renderThemeSelectList() {
-            const container = document.getElementById('theme-select-list');
-            container.innerHTML = "";
-            
-            if (availableThemes.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#666;'>No themes available. Create one first.</p>";
-                return;
-            }
-            
-            availableThemes.forEach((theme) => {
-                const isActive = theme.id === activeThemeId;
-                const div = document.createElement('div');
-                div.className = `theme-item ${isActive ? 'active-theme' : ''}`;
-                div.innerHTML = `
-                    <img src="${theme.bannerUrl}" alt="${theme.name}" class="theme-banner">
-                    <div class="theme-info">
-                        <div class="theme-name">
-                            ${theme.name}
-                            ${isActive ? '<span class="active-badge">Active</span>' : ''}
-                        </div>
-                        <div class="theme-colors">
-                            <div class="color-swatch" style="background:${theme.colors.primary}" title="Primary"></div>
-                            <div class="color-swatch" style="background:${theme.colors.secondary}" title="Secondary"></div>
-                            <div class="color-swatch" style="background:${theme.colors.accent}" title="Accent"></div>
-                        </div>
-                        <div class="theme-actions">
-                            <button class="btn btn-apply" onclick="applyTheme('${theme.id}')">Apply</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        // Render active theme display
-        function renderActiveThemeDisplay() {
-            const container = document.getElementById('active-theme-display');
-            
-            if (!activeThemeId) {
-                container.innerHTML = "<p style='color:#666;'>No active theme selected. Go to 'Site Settings' to apply a theme.</p>";
-                return;
-            }
-            
-            const activeTheme = availableThemes.find(t => t.id === activeThemeId);
-            if (!activeTheme) {
-                container.innerHTML = "<p style='color:#666;'>Active theme not found.</p>";
-                return;
-            }
-            
-            const bannerMessage = activeTheme.bannerMessage || {};
-            
-            container.innerHTML = `
-                <div style="display:flex; gap:20px; align-items:flex-start;">
-                    <img src="${activeTheme.bannerUrl}" alt="${activeTheme.name}" style="width:200px; height:120px; object-fit:cover; border-radius:4px;">
-                    <div style="flex:1;">
-                        <h4 style="margin:0 0 10px; color:#d4a373;">${activeTheme.name} <span class="active-badge">Active</span></h4>
-                        <div style="display:flex; gap:10px; margin-bottom:10px;">
-                            <div style="display:flex; align-items:center; gap:5px;">
-                                <div class="color-swatch" style="background:${activeTheme.colors.primary}"></div>
-                                <span style="font-size:12px;">Primary</span>
-                            </div>
-                            <div style="display:flex; align-items:center; gap:5px;">
-                                <div class="color-swatch" style="background:${activeTheme.colors.secondary}"></div>
-                                <span style="font-size:12px;">Secondary</span>
-                            </div>
-                            <div style="display:flex; align-items:center; gap:5px;">
-                                <div class="color-swatch" style="background:${activeTheme.colors.accent}"></div>
-                                <span style="font-size:12px;">Accent</span>
-                            </div>
-                        </div>
-                        <div style="margin-bottom:10px;">
-                            <strong>Banner Message:</strong>
-                            <p style="font-size:14px; color:#666; margin:5px 0;">${bannerMessage.headline || 'Default'}</p>
-                            <p style="font-size:13px; color:#888; margin:0;">${bannerMessage.subheadline || ''}</p>
-                            <p style="font-size:13px; color:#888; margin:0;">Button: "${bannerMessage.buttonText || 'Shop Collection'}"</p>
-                        </div>
-                        <p style="font-size:12px; color:#666; margin:0;">This theme is currently applied to your website.</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Render theme list
-        function renderThemeList() {
-            const container = document.getElementById('theme-list');
-            container.innerHTML = "";
-            
-            if (availableThemes.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#666; grid-column:1/-1;'>No themes created yet. Go to 'Create Theme' to add one.</p>";
-                return;
-            }
-            
-            availableThemes.forEach((theme) => {
-                const isActive = theme.id === activeThemeId;
-                const div = document.createElement('div');
-                div.className = `theme-item ${isActive ? 'active-theme' : ''}`;
-                div.innerHTML = `
-                    <img src="${theme.bannerUrl}" alt="${theme.name}" class="theme-banner">
-                    <div class="theme-info">
-                        <div class="theme-name">
-                            ${theme.name}
-                            ${isActive ? '<span class="active-badge">Active</span>' : ''}
-                        </div>
-                        <div class="theme-colors">
-                            <div class="color-swatch" style="background:${theme.colors.primary}" title="Primary"></div>
-                            <div class="color-swatch" style="background:${theme.colors.secondary}" title="Secondary"></div>
-                            <div class="color-swatch" style="background:${theme.colors.accent}" title="Accent"></div>
-                        </div>
-                        <div class="theme-actions">
-                            <button class="btn btn-apply" onclick="applyTheme('${theme.id}')">Apply</button>
-                            <button class="btn btn-edit" onclick="editTheme('${theme.id}')">Edit</button>
-                            <button class="btn btn-del" onclick="deleteTheme('${theme.id}')">Delete</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        // Handle banner upload
-        window.handleBannerUpload = async (input) => {
-            const file = input.files[0];
-            if (!file) return;
-
-            const statusDiv = document.getElementById('banner-upload-status');
-            statusDiv.innerText = "Uploading banner... Please wait.";
-
-            const fileName = "banner_" + Date.now() + "_" + file.name;
-            const storageRef = ref(storage, 'themes/' + fileName);
-
-            try {
-                const snapshot = await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(snapshot.ref);
-                newBannerUrl = url;
-                
-                const preview = document.getElementById('new-banner-preview');
-                preview.src = url;
-                preview.classList.add('show');
-                
-                statusDiv.innerText = "Banner uploaded!";
-                input.value = "";
-            } catch (error) {
-                console.error("Banner upload failed", error);
-                alert("Failed to upload banner");
-                statusDiv.innerText = "";
-            }
-        };
-
-        // Save theme
-        window.saveTheme = async () => {
-            const name = document.getElementById('theme-name').value;
-            const primary = document.getElementById('color-primary').value;
-            const secondary = document.getElementById('color-secondary').value;
-            const accent = document.getElementById('color-accent').value;
-            const headline = document.getElementById('banner-headline').value;
-            const subheadline = document.getElementById('banner-subheadline').value;
-            const buttonText = document.getElementById('banner-button-text').value;
-            
-            if (!name) {
-                alert("Please enter a theme name");
-                return;
-            }
-            
-            if (!newBannerUrl && !currentEditThemeId) {
-                alert("Please upload a banner image first");
-                return;
-            }
-
-            const colors = { primary, secondary, accent };
-            const bannerMessage = { headline, subheadline, buttonText };
-            const data = {
-                name: name,
-                bannerUrl: newBannerUrl,
-                colors: colors,
-                bannerMessage: bannerMessage,
-                timestamp: Date.now()
-            };
-
-            try {
-                if (currentEditThemeId) {
-                    // If editing and no new banner, keep existing banner
-                    if (!newBannerUrl) {
-                        const existingTheme = availableThemes.find(t => t.id === currentEditThemeId);
-                        if (existingTheme) {
-                            data.bannerUrl = existingTheme.bannerUrl;
-                        }
-                    }
-                    await updateDoc(doc(db, "themes", currentEditThemeId), data);
-                    alert("Theme updated successfully!");
-                } else {
-                    await addDoc(collection(db, "themes"), data);
-                    alert("Theme created successfully!");
-                }
-                resetThemeForm();
-            } catch (error) {
-                console.error("Error saving theme:", error);
-                alert("Failed to save theme");
-            }
-        };
-
-        // Edit theme
-        window.editTheme = async (themeId) => {
-            const theme = availableThemes.find(t => t.id === themeId);
-            if (!theme) return;
-
-            currentEditThemeId = themeId;
-            newBannerUrl = ""; // Reset new banner URL
-
-            document.getElementById('theme-name').value = theme.name;
-            document.getElementById('color-primary').value = theme.colors.primary;
-            document.getElementById('color-primary-text').value = theme.colors.primary;
-            document.getElementById('color-secondary').value = theme.colors.secondary;
-            document.getElementById('color-secondary-text').value = theme.colors.secondary;
-            document.getElementById('color-accent').value = theme.colors.accent;
-            document.getElementById('color-accent-text').value = theme.colors.accent;
-
-            // Populate banner message fields
-            const bannerMessage = theme.bannerMessage || {};
-            document.getElementById('banner-headline').value = bannerMessage.headline || 'Salon-Quality Nails at Home';
-            document.getElementById('banner-subheadline').value = bannerMessage.subheadline || 'Handcrafted luxury press-ons. Custom bundles available.';
-            document.getElementById('banner-button-text').value = bannerMessage.buttonText || 'Shop Collection';
-
-            // Show existing banner preview
-            const preview = document.getElementById('new-banner-preview');
-            preview.src = theme.bannerUrl;
-            preview.classList.add('show');
-
-            const btn = document.getElementById('btn-save-theme');
-            btn.innerText = "Update Theme";
-            btn.classList.remove('btn-add');
-            btn.classList.add('btn-edit');
-
-            switchTab('create');
-            window.scrollTo(0, 0);
-        };
-
-        // Delete theme
-        window.deleteTheme = async (themeId) => {
-            if (confirm("Are you sure you want to delete this theme?")) {
-                try {
-                    await deleteDoc(doc(db, "themes", themeId));
-                    alert("Theme deleted successfully!");
-                } catch (error) {
-                    console.error("Error deleting theme:", error);
-                    alert("Failed to delete theme");
-                }
-            }
-        };
-
-        // Apply theme
-        window.applyTheme = async (themeId) => {
-            const theme = availableThemes.find(t => t.id === themeId);
-            if (!theme) return;
-
-            try {
-                await setDoc(doc(db, "settings", "site-settings"), {
-                    activeThemeId: themeId,
-                    bannerUrl: theme.bannerUrl,
-                    colors: theme.colors,
-                    bannerMessage: theme.bannerMessage || {
-                        headline: 'Salon-Quality Nails at Home',
-                        subheadline: 'Handcrafted luxury press-ons. Custom bundles available.',
-                        buttonText: 'Shop Collection'
-                    },
-                    timestamp: Date.now()
-                });
-                alert("Theme applied successfully!");
-            } catch (error) {
-                console.error("Error applying theme:", error);
-                alert("Failed to apply theme");
-            }
-        };
-
-        // Update preview
-        function updatePreview(settings) {
-            const root = document.documentElement;
-            
-            if (settings.colors) {
-                root.style.setProperty('--preview-primary', settings.colors.primary);
-                root.style.setProperty('--preview-secondary', settings.colors.secondary);
-                root.style.setProperty('--preview-accent', settings.colors.accent);
-            }
-            
-            if (settings.bannerUrl) {
-                const hero = document.getElementById('preview-hero');
-                hero.style.background = `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${settings.bannerUrl}')`;
-                hero.style.backgroundSize = 'cover';
-                hero.style.backgroundPosition = 'center';
-            }
-            
-            // Update banner message if exists
-            if (settings.bannerMessage) {
-                const headlineEl = document.getElementById('preview-headline');
-                const subheadlineEl = document.getElementById('preview-subheadline');
-                const buttonEl = document.getElementById('preview-button');
-                
-                if (headlineEl) headlineEl.textContent = settings.bannerMessage.headline || 'Salon-Quality Nails at Home';
-                if (subheadlineEl) subheadlineEl.textContent = settings.bannerMessage.subheadline || 'Handcrafted luxury press-ons. Custom bundles available.';
-                if (buttonEl) buttonEl.textContent = settings.bannerMessage.buttonText || 'Shop Collection';
-            }
-        }
-
-        // Reset theme form
-        window.resetThemeForm = () => {
-            document.getElementById('theme-name').value = "";
-            document.getElementById('color-primary').value = "#d4a373";
-            document.getElementById('color-primary-text').value = "#d4a373";
-            document.getElementById('color-secondary').value = "#faedcd";
-            document.getElementById('color-secondary-text').value = "#faedcd";
-            document.getElementById('color-accent').value = "#b08968";
-            document.getElementById('color-accent-text').value = "#b08968";
-            
-            // Reset banner message fields
-            document.getElementById('banner-headline').value = "Salon-Quality Nails at Home";
-            document.getElementById('banner-subheadline').value = "Handcrafted luxury press-ons. Custom bundles available.";
-            document.getElementById('banner-button-text').value = "Shop Collection";
-            
-            newBannerUrl = "";
-            currentEditThemeId = null;
-            
-            const preview = document.getElementById('new-banner-preview');
-            preview.classList.remove('show');
-            document.getElementById('banner-upload-status').innerText = "";
-            
-            const btn = document.getElementById('btn-save-theme');
-            btn.innerText = "Create Theme";
-            btn.classList.remove('btn-edit');
-            btn.classList.add('btn-add');
-        };
-
-        // Switch tabs - make it global for onclick handlers
+    <!-- Simple tab switching for preview only -->
+    <script>
         window.switchTab = (tabName) => {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -746,37 +416,6 @@
                 buttons[2].classList.add('active');
             }
         };
-
-        // Sync color inputs
-        document.addEventListener('DOMContentLoaded', () => {
-            const colorInputs = [
-                { picker: 'color-primary', text: 'color-primary-text' },
-                { picker: 'color-secondary', text: 'color-secondary-text' },
-                { picker: 'color-accent', text: 'color-accent-text' }
-            ];
-
-            colorInputs.forEach(({ picker, text }) => {
-                const pickerEl = document.getElementById(picker);
-                const textEl = document.getElementById(text);
-
-                pickerEl.addEventListener('input', () => {
-                    textEl.value = pickerEl.value;
-                });
-
-                textEl.addEventListener('input', () => {
-                    if (/^#[0-9A-Fa-f]{6}$/.test(textEl.value)) {
-                        pickerEl.value = textEl.value;
-                    }
-                });
-            });
-
-            // Load themes on page load
-            loadThemes();
-        });
-        } catch (error) {
-            console.error('Error initializing Firebase:', error);
-            alert('Error initializing Firebase. Please check the console for details.');
-        }
     </script>
 </body>
 </html>
