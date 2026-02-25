@@ -108,6 +108,34 @@
         }
         .thumb:hover, .thumb.active { opacity: 1; border: 2px solid var(--primary-color); }
 
+        /* Sold Badge */
+        .sold-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 4px;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Sold Product Styling */
+        .product-card.sold {
+            opacity: 0.7;
+        }
+        .product-card.sold .product-img {
+            filter: grayscale(100%);
+        }
+        .product-card.sold .dm-btn {
+            background-color: #999;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
         /* Info */
         .product-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         .product-id { font-size: 12px; color: #888; text-transform: uppercase; margin-bottom: 5px; }
@@ -241,9 +269,15 @@
 
                 const card = document.createElement('div');
                 card.classList.add('product-card');
+                
+                // Add sold class if product is sold
+                if (p.sold) {
+                    card.classList.add('sold');
+                }
 
                 let galleryHtml = `<div class="gallery-container">
                     <img id="img-${doc.id}" src="${images[0] || 'https://placehold.co/400'}" class="product-img">
+                    ${p.sold ? '<div class="sold-badge">SOLD</div>' : ''}
                 </div>`;
 
                 if (images.length > 1) {
